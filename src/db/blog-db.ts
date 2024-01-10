@@ -13,13 +13,13 @@ export const blogDB: BlogType[] = [
         websiteUrl: "https://samurai.it-incubator.io/"
     },
     {
-        id: "111",
+        id: "112",
         name: "IT",
         description: "incubator",
         websiteUrl: "https://samurai.it-incubator.io/"
     },
     {
-        id: "111",
+        id: "113",
         name: "IT",
         description: "incubator",
         websiteUrl: "https://samurai.it-incubator.io/"
