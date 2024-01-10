@@ -11,7 +11,15 @@ blogRoute.get('/',(req: Request, res: Response) => {
     res.send(blogs)
 })
 
+blogRoute.get('/:id',(req: Request, res: Response) => {
+    const result = BlogRepository.getBlogById(req.params.id)
+
+    res.send(result)
+})
+
+
 blogRoute.post('/', authMiddleware, blogValidator(), (req: Request, res: Response) => {
+
     const { name, description, websiteUrl } = req.body
 
     const newBlog = {
@@ -24,4 +32,20 @@ blogRoute.post('/', authMiddleware, blogValidator(), (req: Request, res: Respons
     BlogRepository.createBlog(newBlog)
 
     res.status(201).json(newBlog)
+})
+
+blogRoute.put('/', authMiddleware, blogValidator(), (req: Request, res: Response) => {
+
+    const result = BlogRepository.updateBlog(req.body)
+
+    res.sendStatus(result)
+
+})
+
+blogRoute.delete('/:id', authMiddleware, (req: Request, res: Response) => {
+
+    const result = BlogRepository.deleteBlog(req.params.id)
+
+    res.sendStatus(result)
+
 })
