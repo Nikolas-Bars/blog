@@ -7,8 +7,8 @@ export const app = express()
 
 app.use(express.json())
 
-app.use('/blog', blogRoute)
+app.use('/blogs', blogRoute)
 
-app.use('/post', postRoute)
+app.use('/posts', postRoute)
 
 app.use('/testing/all-data', deleteAllDataRoute)
