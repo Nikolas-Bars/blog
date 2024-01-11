@@ -20,7 +20,7 @@ export class BlogRepository {
         blogDB.push(blog)
     }
 
-    static updateBlog(body: BlogType, id) {
+    static updateBlog(body: BlogType, id: string) {
         let blog = blogDB.find((blog) => blog.id === id)
 
         if (!blog) {
