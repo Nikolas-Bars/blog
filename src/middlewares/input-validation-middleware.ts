@@ -10,7 +10,7 @@ export const inputValidatorMiddleware = (req: Request, res: Response, next: Next
     if (!formattedError.isEmpty()) {
         const errorMessage = formattedError.array({onlyFirstError: true})
 
-        res.status(400).json({errorMessages: errorMessage})
+        res.status(400).json({errorsMessages: errorMessage})
 
         return
     }
