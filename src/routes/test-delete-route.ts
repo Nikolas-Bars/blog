@@ -5,7 +5,7 @@ import {postDB, PostType} from "../db/post-db";
 
 export const deleteAllDataRoute = express.Router()
 
-deleteAllDataRoute.delete('/', authMiddleware, (req: Request, res: Response) => {
+deleteAllDataRoute.delete('/',(req: Request, res: Response) => {
 
     blogDB.length = 0
 
