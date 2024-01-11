@@ -17,7 +17,6 @@ blogRoute.get('/:id',(req: Request, res: Response) => {
     res.send(result)
 })
 
-
 blogRoute.post('/', authMiddleware, blogValidator(), (req: Request, res: Response) => {
 
     const { name, description, websiteUrl } = req.body
