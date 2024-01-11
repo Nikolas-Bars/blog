@@ -33,9 +33,9 @@ blogRoute.post('/', authMiddleware, blogValidator(), (req: Request, res: Respons
     res.status(201).json(newBlog)
 })
 
-blogRoute.put('/', authMiddleware, blogValidator(), (req: Request, res: Response) => {
+blogRoute.put('/:id', authMiddleware, blogValidator(), (req: Request, res: Response) => {
 
-    const result = BlogRepository.updateBlog(req.body)
+    const result = BlogRepository.updateBlog(req.body, req.body.params)
 
     res.sendStatus(result)
 

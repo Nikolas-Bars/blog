@@ -21,9 +21,9 @@ export class PostRepository {
         postDB.push(newPost)
     }
 
-    static updatePost(body: PostType) {
+    static updatePost(body: PostType, id) {
 
-        let post = postDB.find((post) => post.id === body.id)
+        let post = postDB.find((post) => post.id === id)
 
         if (!post) {
             return 404
