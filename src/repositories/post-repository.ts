@@ -26,7 +26,7 @@ export class PostRepository {
 
     static createPost(newPost: NewPostDataType) {
 
-        const blog = blogDB.find((blog) => blog.id === newPost.blogId)
+        const blog = blogDB.find((blog) => blog.id === newPost.blogId)!
 
         const post = {...newPost, blogName: blog.name, id: Number(new Date).toString()}
 
