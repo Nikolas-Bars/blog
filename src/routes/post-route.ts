@@ -35,9 +35,9 @@ postRoute.post('/', authMiddleware, postValidator(), (req: Request, res: Respons
         blogName
     }
 
-    PostRepository.createPost(newPost)
+    const post = PostRepository.createPost(newPost)
 
-    res.status(201).json(newPost)
+    res.status(201).json(post)
 })
 
 postRoute.put('/:id', authMiddleware, postValidator(), (req: Request, res: Response) => {
