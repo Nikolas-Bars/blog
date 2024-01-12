@@ -18,7 +18,10 @@ export class PostRepository {
     }
 
     static createPost(newPost: PostType) {
-        postDB.push(newPost)
+
+        const blog = blogDB.find((blog) => blog.id === newPost.blogId)
+
+        postDB.push({...newPost, blogName: blog.name})
     }
 
     static updatePost(body: PostType, id: string) {
