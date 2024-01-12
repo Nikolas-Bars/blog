@@ -36,7 +36,7 @@ postRoute.post('/', authMiddleware, postValidator(), (req: Request, res: Respons
 
 postRoute.put('/:id', authMiddleware, postValidator(), (req: Request, res: Response) => {
 
-    const result = PostRepository.updatePost(req.body, req.body.params.id)
+    const result = PostRepository.updatePost(req.body, req.params.id)
 
     res.sendStatus(result)
 
