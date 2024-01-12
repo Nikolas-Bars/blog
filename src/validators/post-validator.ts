@@ -9,7 +9,7 @@ const shortDescriptionValidator = body('shortDescription')
     .isString().withMessage('shortDescription must be string type').trim().isLength({min: 1, max: 100}).withMessage('incorrect shortDescription value')
 
 const contentValidator = body('content')
-    .isString().withMessage('content must be string type')
+    .isString().withMessage('content must be string type').trim()
     .isLength({min: 1, max: 100}).withMessage('incorrect content')
 
 const blogIdValidator = body('blogId').isString().withMessage('shortDescription must be string type')
