@@ -12,14 +12,12 @@ const contentValidator = body('content')
     .isString().withMessage('content must be string type')
     .isLength({min: 1, max: 100}).withMessage('incorrect content')
 
-const blogIdValidator = body('blogId').custom((id: string) => {
+const blogIdValidator = body('blogId').isString().withMessage('shortDescription must be string type')
+    .isLength({min: 1}).withMessage('blogId is required field').custom((id: string) => {
     const blog = BlogRepository.getBlogById(id)
 
-    if(!blog) {
-        // проверь необходимость этих строк
-        throw Error('incorrect blogId')
-    }
-    return true
+    return blog !== 404;
+
 }).withMessage('incorrect blogId')
 
 export const postValidator = () => {
