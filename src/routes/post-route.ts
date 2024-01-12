@@ -1,10 +1,6 @@
 import express, {Request, Response} from 'express'
-import {blogDB} from "../db/blog-db";
 import {authMiddleware} from "../middlewares/auth-middleware";
-import {blogValidator} from "../validators/blog-validator";
-import {BlogRepository} from "../repositories/blog-repository";
 import {PostRepository} from "../repositories/post-repository";
-import {blogRoute} from "./blog-route";
 import {postValidator} from "../validators/post-validator";
 
 export const postRoute = express.Router()
@@ -24,18 +20,16 @@ postRoute.get('/:id',(req: Request, res: Response) => {
 
 postRoute.post('/', authMiddleware, postValidator(), (req: Request, res: Response) => {
 
-    const { title, shortDescription, content, blogId, blogName } = req.body
+    const { title, shortDescription, content, blogId } = req.body
 
-    const newPost = {
-        id: Number(new Date).toString(),
+    const newPostData = {
         title,
         shortDescription,
         content,
-        blogId,
-        blogName
+        blogId
     }
 
-    const post = PostRepository.createPost(newPost)
+    const post = PostRepository.createPost(newPostData)
 
     res.status(201).json(post)
 })

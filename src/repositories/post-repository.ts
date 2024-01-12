@@ -1,6 +1,13 @@
 import {postDB, PostType} from "../db/post-db";
 import {blogDB, BlogType} from "../db/blog-db";
 
+type NewPostDataType = {
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string
+}
+
 export class PostRepository {
 
     static getAll() {
@@ -17,16 +24,16 @@ export class PostRepository {
         return  post
     }
 
-    static createPost(newPost: PostType) {
+    static createPost(newPost: NewPostDataType) {
 
         const blog = blogDB.find((blog) => blog.id === newPost.blogId)
 
-        if (blog) {
-            const post = {...newPost, blogName: blog.name}
-            return post
-        } else {
-            return 401
-        }
+        const post = {...newPost, blogName: blog.name, id: Number(new Date).toString()}
+
+        postDB.push(post)
+
+        return post
+
 
     }
 
