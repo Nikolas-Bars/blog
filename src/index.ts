@@ -1,4 +1,5 @@
-import {app} from "./settings";
+import {app} from "./app";
+
 
 const port = process.env.PORT || 3005
 
