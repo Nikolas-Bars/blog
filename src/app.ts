@@ -7,6 +7,10 @@ export const app = express()
 
 app.use(express.json())
 
+app.get('/', (req, res) => {
+    res.json('Hello friends!!!')
+})
+
 app.use('/blogs', blogRoute)
 
 app.use('/posts', postRoute)
