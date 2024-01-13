@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express'
-import {blogDB} from "../db/blog-db";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {blogValidator} from "../validators/blog-validator";
 import {BlogRepository} from "../repositories/blog-repository";
@@ -8,6 +7,7 @@ export const blogRoute = express.Router()
 
 blogRoute.get('/',(req: Request, res: Response) => {
     const blogs = BlogRepository.getAll()
+
     res.send(blogs)
 })
 
