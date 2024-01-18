@@ -1,24 +1,24 @@
 import express, {Request, Response} from 'express'
 import {authMiddleware} from "../middlewares/auth-middleware";
-import {PostRepository} from "../repositories/post-repository";
+import {PostRepository} from "../repositories/post-mongo-repository";
 import {postValidator} from "../validators/post-validator";
 
 export const postRoute = express.Router()
 
-postRoute.get('/',(req: Request, res: Response) => {
+postRoute.get('/',async (req: Request, res: Response) => {
 
-    const posts = PostRepository.getAll()
+    const posts = await PostRepository.getAll()
 
     res.send(posts)
 })
 
-postRoute.get('/:id',(req: Request, res: Response) => {
-    const result = PostRepository.getPostById(req.params.id)
+postRoute.get('/:id',async (req: Request, res: Response) => {
+    const result = await PostRepository.getPostById(req.params.id)
 
     res.send(result)
 })
 
-postRoute.post('/', authMiddleware, postValidator(), (req: Request, res: Response) => {
+postRoute.post('/', authMiddleware, postValidator(), async (req: Request, res: Response) => {
 
     const { title, shortDescription, content, blogId } = req.body
 
@@ -29,22 +29,22 @@ postRoute.post('/', authMiddleware, postValidator(), (req: Request, res: Respons
         blogId
     }
 
-    const post = PostRepository.createPost(newPostData)
+    const post = await PostRepository.createPost(newPostData)
 
     res.status(201).json(post)
 })
 
-postRoute.put('/:id', authMiddleware, postValidator(), (req: Request, res: Response) => {
+postRoute.put('/:id', authMiddleware, postValidator(), async (req: Request, res: Response) => {
 
-    const result = PostRepository.updatePost(req.body, req.params.id)
+    const result = await PostRepository.updatePost(req.body, req.params.id)
 
     res.sendStatus(result)
 
 })
 
-postRoute.delete('/:id', authMiddleware, (req: Request, res: Response) => {
+postRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
 
-    const result = PostRepository.deletePost(req.params.id)
+    const result = await PostRepository.deletePost(req.params.id)
 
     res.sendStatus(result)
 
