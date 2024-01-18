@@ -4,9 +4,13 @@ import {BlogDb} from "../models/blogs/db/blog-db";
 
 dotenv.config()
 // указываем порт
-export const port = process.env.PORT || 3007
+export const port = process.env.PORT || 3005
+
 // указываем ссылку для коннекта к базе
-const uri = process.env.MONGO_URI || "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/\n"
+// локальная - mongodb://localhost:27017
+// atlas "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/"
+
+const uri = process.env.MONGO_URI || "mongodb://localhost:27017"
 
 const client = new MongoClient(uri)
 // указываем к какой конкретно базе коннектимся
