@@ -1,9 +1,12 @@
 import {blogDB, BlogType} from "../db/blog-db";
+import {blogsCollection} from "../db/db";
 
 export class BlogRepository {
 
-    static getAll() {
-        return blogDB
+    static async getAll() {
+
+        return await blogsCollection.find({}).toArray()
+
     }
 
     static getBlogById(blogId: string) {

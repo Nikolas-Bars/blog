@@ -1,6 +1,7 @@
 import {body} from "express-validator";
 import {BlogRepository} from "../repositories/blog-repository";
 import {inputValidatorMiddleware} from "../middlewares/input-validation-middleware";
+import {blogsCollection} from "../db/db";
 
 const titleValidator = body('title')
     .isString().withMessage('title must be string type').trim().isLength({min: 1, max: 30}).withMessage('incorrect length of title')
@@ -13,8 +14,8 @@ const contentValidator = body('content')
     .isLength({min: 1, max: 100}).withMessage('incorrect content')
 
 const blogIdValidator = body('blogId').isString().withMessage('shortDescription must be string type')
-    .isLength({min: 1}).withMessage('blogId is required field').custom((id: string) => {
-    const blog = BlogRepository.getBlogById(id)
+    .isLength({min: 1}).withMessage('blogId is required field').custom(async (id: string) => {
+    const blog = BlogRepository.getBlogById(id) || await blogsCollection.findOne({id: id})
 
     return blog !== 404;
 
