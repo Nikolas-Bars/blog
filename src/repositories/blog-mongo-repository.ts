@@ -45,7 +45,7 @@ export class BlogRepository {
                 {name: blog.name,
                     description: blog.description,
                     websiteUrl: blog.websiteUrl,
-                    isMembership: blog.isMembership,
+                    isMembership: false,
                     createdAt: blog.createdAt
                 })
 
