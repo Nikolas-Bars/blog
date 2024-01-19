@@ -1,6 +1,5 @@
 import {app} from "../../app";
 import request from 'supertest'
-import {log} from "util";
 
 describe('/posts', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -52,10 +51,11 @@ describe('/posts', () => {
         expect(createdPost).toEqual({
             ...postBodyData,
             id: expect.any(String),
-            blogName: "new blog name"
+            blogName: "new blog name",
+            createdAt: expect.any(String)
         })
 
-        expect.setState({ blogIdForPost: responseBlog.body.id, postId: createdPost.id })
+        expect.setState({ blogIdForPost: responseBlog.body.id.toString(), postId: createdPost.id.toString() })
     })
 
     it('post should be updated', async () => {
