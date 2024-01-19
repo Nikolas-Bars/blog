@@ -2,20 +2,24 @@ import express, {Request, Response} from 'express'
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {PostRepository} from "../repositories/post-mongo-repository";
 import {postValidator} from "../validators/post-validator";
+import {OutputPostModel} from "../models/posts/output/output-post";
 
 export const postRoute = express.Router()
 
 postRoute.get('/',async (req: Request, res: Response) => {
 
-    const posts = await PostRepository.getAll()
+    const posts: OutputPostModel[] | false = await PostRepository.getAll()
 
-    res.send(posts)
+    posts ? res.send(posts) : res.sendStatus(404)
+
 })
 
 postRoute.get('/:id',async (req: Request, res: Response) => {
+
     const result = await PostRepository.getPostById(req.params.id)
 
-    res.send(result)
+    result ? res.sendStatus(200) : res.sendStatus(404)
+
 })
 
 postRoute.post('/', authMiddleware, postValidator(), async (req: Request, res: Response) => {
@@ -29,23 +33,24 @@ postRoute.post('/', authMiddleware, postValidator(), async (req: Request, res: R
         blogId
     }
 
-    const post = await PostRepository.createPost(newPostData)
+    const post: OutputPostModel | false = await PostRepository.createPost(newPostData)
 
-    res.status(201).json(post)
+    post ? res.status(201).json(post) : res.sendStatus(404)
+
 })
 
 postRoute.put('/:id', authMiddleware, postValidator(), async (req: Request, res: Response) => {
 
-    const result = await PostRepository.updatePost(req.body, req.params.id)
+    const result: boolean = await PostRepository.updatePost(req.body, req.params.id)
 
-    res.sendStatus(result)
+    result ? res.sendStatus(204) : res.sendStatus(404)
 
 })
 
 postRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
 
-    const result = await PostRepository.deletePost(req.params.id)
+    const result: boolean = await PostRepository.deletePost(req.params.id)
 
-    res.sendStatus(result)
+    result ? res.sendStatus(204) : res.sendStatus(404)
 
 })

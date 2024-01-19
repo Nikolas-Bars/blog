@@ -24,12 +24,14 @@ blogRoute.get('/:id',async (req: Request, res: Response) => {
 
 blogRoute.post('/', authMiddleware, blogValidator(), async (req: Request, res: Response) => {
 
-    const { name, description, websiteUrl } = req.body
+    const { name, description, websiteUrl, isMembership } = req.body
 
     const newBlog = {
         name,
         description,
-        websiteUrl
+        websiteUrl,
+        isMembership,
+        createdAt: (new Date()).toISOString()
     }
 
     const newBlogId = await BlogRepository.createBlog(newBlog)

@@ -1,6 +1,7 @@
 import {app} from "../../app";
 import request from 'supertest'
 import {log} from "util";
+import {BlogDb} from "../../models/blogs/db/blog-db";
 
 describe('/blogs', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -26,7 +27,8 @@ describe('/blogs', () => {
         const bodyData = {
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc"
+            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            isMembership: false
         }
         const response = await request(app)
             .post('/blogs')
@@ -40,7 +42,9 @@ describe('/blogs', () => {
             id: expect.any(String),
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc"
+            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            isMembership: expect.any(Boolean),
+            createdAt: expect.any(String)
         })
 
         expect.setState({ blogId: createdBlog.id })
@@ -99,7 +103,8 @@ describe('/blogs', () => {
         const newBlogsData = {
             name: "super blog name",
             description: "description blog",
-            websiteUrl: "https://youtube.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc"
+            websiteUrl: "https://youtube.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            isMembership: false,
         }
 
         await request(app)

@@ -1,6 +1,11 @@
 import {PostType} from "../db/post-db";
 import {blogsCollection, postsCollection} from "../db/db";
 import {BlogType} from "../db/blog-db";
+import {PostDb} from "../models/posts/db/post-db";
+import {postMapper} from "../models/posts/mappers/post-mapper";
+import {OutputPostModel} from "../models/posts/output/output-post";
+import {ObjectId} from "mongodb";
+import {blogMapper} from "../models/blogs/mappers/blog-mapper";
 
 type NewPostDataType = {
     title: string,
@@ -11,52 +16,100 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    static async getAll() {
-        return await postsCollection.find({}).toArray()
-    }
+    static async getAll(): Promise<OutputPostModel[] | false> {
 
-    static async getPostById(postId: string) {
-        const post = await postsCollection.findOne({id: postId})
+        try {
 
-        if(!post) {
-            return 404
+            const posts = await postsCollection.find({}).toArray()
+
+            return posts.map((post) => {
+                return postMapper(post)
+            })
+
+        } catch (e) {
+            return false
         }
 
-        return  post
     }
 
-    static async createPost(newPost: NewPostDataType) {
+    static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
+        try {
 
-        const blog = await blogsCollection.findOne({id: newPost.blogId})
+            const post = await postsCollection.findOne({_id: new ObjectId(postId)})
 
-        const post = {...newPost, blogName: blog ? blog.name : '', id: Number(new Date).toString()}
+            if(!post) {
+                return false
+            }
 
-        await postsCollection.insertOne(post)
+            return postMapper(post)
 
-        return post
-
-
+        }  catch (e) {
+            return false
+        }
     }
 
-    static async updatePost(body: PostType, id: string) {
-        console.log(123)
-        await postsCollection.updateOne({id}, {$set: {title: body.title, shortDescription: body.shortDescription, content: body.content, blogId: body.blogId}})
-        console.log(444)
-        let post = await postsCollection.findOne({id})
-        console.log(555)
-        if (!post) {
-            return 404
+    static async createPost(newPost: NewPostDataType): Promise<OutputPostModel | false> {
+        try {
+
+            const blog = await blogsCollection.findOne({_id: new ObjectId(newPost.blogId)})
+
+            if (blog) {
+                const createdDate = (new Date()).toISOString()
+                const result = await postsCollection.insertOne(
+                    {
+                        ...newPost,
+                        blogName: blog.name,
+                        createdAt: createdDate
+                    })
+
+                return {
+                    id: result.insertedId.toString(),
+                    ...newPost,
+                    blogName: blog.name,
+                    createdAt: createdDate
+                }
+            } else {
+                return false
+            }
+
+        } catch (e) {
+            return false
+        }
+    }
+
+    static async updatePost(body: PostType, id: string): Promise<boolean> {
+
+        try {
+
+            const result = await postsCollection.updateOne(
+                {_id: new ObjectId(id)},
+                {$set:
+                        {
+                            title: body.title,
+                            shortDescription: body.shortDescription,
+                            content: body.content,
+                            blogId: body.blogId
+                        }})
+
+            return !!result.modifiedCount
+
+        } catch (e) {
+            return false
         }
 
-        Object.assign(post, body);
 
-        return 204
     }
 
-    static async deletePost(postId: string) {
+    static async deletePost(postId: string): Promise<boolean> {
+        try {
 
-        const result = await postsCollection.deleteOne({id: postId})
+            const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
 
-        return result.deletedCount === 1 ? 204 : 404
+            return !!result.deletedCount
+
+        } catch (e) {
+            return false
+        }
+
     }
 }

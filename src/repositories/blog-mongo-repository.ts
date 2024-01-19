@@ -1,4 +1,3 @@
-import {BlogType} from "../db/blog-db";
 import {blogsCollection} from "../db/db";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {ObjectId, WithId} from "mongodb";
@@ -42,7 +41,13 @@ export class BlogRepository {
     static async createBlog(blog: BlogDb): Promise<string | false> {
         try {
 
-            const res = await blogsCollection.insertOne({name: blog.name, description: blog.description, websiteUrl: blog.websiteUrl})
+            const res = await blogsCollection.insertOne(
+                {name: blog.name,
+                    description: blog.description,
+                    websiteUrl: blog.websiteUrl,
+                    isMembership: blog.isMembership,
+                    createdAt: blog.createdAt
+                })
 
             return res.insertedId.toString()
 
@@ -53,10 +58,10 @@ export class BlogRepository {
         }
     }
 
-    static async updateBlog(body: BlogType, id: string): Promise<boolean> {
+    static async updateBlog(body: BlogDb, id: string): Promise<boolean> {
         try {
 
-            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, websiteUrl: body.websiteUrl}})
+            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: body.isMembership, websiteUrl: body.websiteUrl}})
 
             return !!result.matchedCount
 
