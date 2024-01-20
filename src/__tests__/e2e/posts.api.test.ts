@@ -58,6 +58,30 @@ describe('/posts', () => {
         expect.setState({ blogIdForPost: responseBlog.body.id.toString(), postId: createdPost.id.toString() })
     })
 
+    it('should be get array with two error`s object', async () => {
+
+        const postData =  {
+            title: "post title",
+            shortDescription: 534534553,
+            content: "some content",
+            blogId: 'incorrect blogId',
+        }
+
+        const response = await request(app)
+            .post('/posts')
+            .auth('admin', 'qwerty')
+            .send(postData)
+            .expect(400)
+
+
+        expect(response.body).toEqual({
+            errorsMessages: [
+                { message: expect.any(String), field: "shortDescription" },
+                { message: expect.any(String), field: "blogId" }
+            ]
+        })
+    })
+
     it('should be get post by id', async () => {
 
         const { postId, blogIdForPost } = expect.getState()
