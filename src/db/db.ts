@@ -12,7 +12,7 @@ export const port = process.env.PORT || 3005
 // локальная - mongodb://localhost:27017
 // atlas "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/"
 
-const uri = process.env.MONGO_URI || "mongodb://localhost:27017"
+const uri = process.env.MONGO_URI || "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/"
 
 const client = new MongoClient(uri)
 // указываем к какой конкретно базе коннектимся

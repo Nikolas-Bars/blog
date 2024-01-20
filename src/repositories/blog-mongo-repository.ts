@@ -61,7 +61,7 @@ export class BlogRepository {
     static async updateBlog(body: BlogDb, id: string): Promise<boolean> {
         try {
 
-            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: body.isMembership, websiteUrl: body.websiteUrl}})
+            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: false, websiteUrl: body.websiteUrl}})
 
             return !!result.matchedCount
 
