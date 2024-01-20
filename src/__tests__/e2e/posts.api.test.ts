@@ -58,6 +58,27 @@ describe('/posts', () => {
         expect.setState({ blogIdForPost: responseBlog.body.id.toString(), postId: createdPost.id.toString() })
     })
 
+    it('should be get post by id', async () => {
+
+        const { postId, blogIdForPost } = expect.getState()
+
+        const response = await request(app)
+            .get(`/posts//${postId}`)
+            .expect(200)
+
+        const post = response.body
+
+        expect(post).toEqual({
+            id: expect.any(String),
+            title: "post title",
+            shortDescription: "shortDescription for post",
+            content: "some content",
+            blogId: blogIdForPost,
+            blogName: "new blog name",
+            createdAt: expect.any(String)
+        })
+    })
+
     it('post should be updated', async () => {
 
         const { postId, blogIdForPost } = expect.getState()

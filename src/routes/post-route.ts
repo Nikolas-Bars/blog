@@ -18,7 +18,7 @@ postRoute.get('/:id',async (req: Request, res: Response) => {
 
     const result = await PostRepository.getPostById(req.params.id)
 
-    result ? res.sendStatus(200) : res.sendStatus(404)
+    result ? res.status(200).json(result) : res.sendStatus(404)
 
 })
 
