@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {BlogRepository} from "../repositories/blog-repository";
+import {BlogRepository} from "../repositories/blog-mongo-repository";
 import {inputValidatorMiddleware} from "../middlewares/input-validation-middleware";
 import {blogsCollection} from "../db/db";
 
@@ -15,9 +15,9 @@ const contentValidator = body('content')
 
 const blogIdValidator = body('blogId').isString().withMessage('shortDescription must be string type')
     .isLength({min: 1}).withMessage('blogId is required field').custom(async (id: string) => {
-    const blog = BlogRepository.getBlogById(id) || await blogsCollection.findOne({id: id})
+    const blog = await BlogRepository.getBlogById(id)
 
-    return blog !== 404;
+    return !!blog;
 
 }).withMessage('incorrect blogId')
 
