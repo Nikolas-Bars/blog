@@ -29,7 +29,7 @@ export const runDb = async () => {
         console.log('Client connected to DB')
         console.log(console.log(`blog was started on ${port} port`))
     } catch (e) {
-        console.error(e)
+        console.error(e, 'runDb')
         await client.close()
     }
 }
