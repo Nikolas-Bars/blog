@@ -3,16 +3,21 @@ import {authMiddleware} from "../middlewares/auth-middleware";
 import {blogValidator} from "../validators/blog-validator";
 import {BlogRepository} from "../repositories/blog-mongo-repository";
 import {OutputBlogType} from "../models/blogs/output/blog-output-model";
+import {ObjectId} from "mongodb";
 
 export const blogRoute = express.Router()
 
 blogRoute.get('/',async (req: Request, res: Response)  => {
-    const blogs: OutputBlogType[] | false = await BlogRepository.getAll()
+    const blogs: OutputBlogType[] | null = await BlogRepository.getAll()
 
     blogs ? res.send(blogs) : res.sendStatus(404)
 })
 
 blogRoute.get('/:id',async (req: Request, res: Response) => {
+    if(!ObjectId.isValid(req.params.id)){
+        res.sendStatus(404)
+        return
+    }
 
     const result = await BlogRepository.getBlogById(req.params.id)
 
@@ -49,6 +54,10 @@ blogRoute.post('/', authMiddleware, blogValidator(), async (req: Request, res: R
 })
 
 blogRoute.put('/:id', authMiddleware, blogValidator(), async (req: Request, res: Response) => {
+    if(!ObjectId.isValid(req.params.id)){
+        res.sendStatus(404)
+        return
+    }
 
     const result = await BlogRepository.updateBlog(req.body, req.params.id)
 
@@ -57,6 +66,10 @@ blogRoute.put('/:id', authMiddleware, blogValidator(), async (req: Request, res:
 })
 
 blogRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+    if(!ObjectId.isValid(req.params.id)){
+        res.sendStatus(404)
+        return
+    }
 
     const result = await BlogRepository.deleteBlog(req.params.id)
 

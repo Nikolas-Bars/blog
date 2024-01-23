@@ -6,7 +6,7 @@ import {blogMapper} from "../models/blogs/mappers/blog-mapper";
 
 export class BlogRepository {
 
-    static async getAll(): Promise<OutputBlogType[] | false> {
+    static async getAll(): Promise<OutputBlogType[] | null> {
         try{
 
             const blogs = await blogsCollection.find({}).toArray()
@@ -17,28 +17,28 @@ export class BlogRepository {
 
         } catch (e) {
 
-            return false
+            return null
 
         }
     }
 
-    static async getBlogById(blogId: string): Promise<OutputBlogType | boolean> {
+    static async getBlogById(blogId: string): Promise<OutputBlogType | null> {
         try {
 
             const blog = await blogsCollection.findOne({_id: new ObjectId(blogId)})
 
             if (blog) return blogMapper(blog)
 
-            else return false
+            else return null
 
         } catch (e) {
 
-            return false
+            return null
 
         }
     }
 
-    static async createBlog(blog: BlogDb): Promise<string | false> {
+    static async createBlog(blog: BlogDb): Promise<string | null> {
         try {
 
             const res = await blogsCollection.insertOne(
@@ -53,7 +53,7 @@ export class BlogRepository {
 
         } catch (e) {
 
-            return false
+            return null
 
         }
     }

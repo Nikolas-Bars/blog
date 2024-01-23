@@ -16,6 +16,10 @@ const contentValidator = body('content')
 
 const blogIdValidator = body('blogId').isString().withMessage('blogId must be string type')
     .isLength({min: 1}).withMessage('blogId is required field').custom(async (id: string) => {
+        if(!ObjectId.isValid(id)){
+            throw new Error('incorrect blogId')
+        }
+
     const blog = await blogsCollection.findOne({_id: new ObjectId(id)})
 
     if (!blog) {
