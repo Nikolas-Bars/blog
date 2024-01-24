@@ -1,5 +1,10 @@
-import {postDB, PostType} from "../db/post-db";
-import {blogDB, BlogType} from "../db/blog-db";
+import {PostType} from "../db/post-db";
+import {blogsCollection, postsCollection} from "../db/db";
+import {postMapper} from "../models/posts/mappers/post-mapper";
+import {OutputPostModel} from "../models/posts/output/output-post";
+import {ObjectId} from "mongodb";
+import {PostDbType} from "../models/posts/db/post-db";
+import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
 
 type NewPostDataType = {
     title: string,
@@ -10,54 +15,115 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    static getAll() {
-        return postDB
-    }
+    static async getAll(): Promise<OutputPostModel[] | false> {
 
-    static getPostById(postId: string) {
-        const post = postDB.find((blog) => blog.id === postId)
+        try {
 
-        if(!post) {
-            return 404
+            const posts = await postsCollection.find({}).toArray()
+
+            return posts.map((post) => {
+                return postMapper(post)
+            })
+
+        } catch (e) {
+            return false
         }
 
-        return  post
     }
 
-    static createPost(newPost: NewPostDataType) {
+    static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
+        try {
 
-        const blog = blogDB.find((blog) => blog.id === newPost.blogId)!
+            const post = await postsCollection.findOne({_id: new ObjectId(postId)})
 
-        const post = {...newPost, blogName: blog.name, id: Number(new Date).toString()}
+            if(!post) {
+                return false
+            }
 
-        postDB.push(post)
+            return postMapper(post)
 
-        return post
-
-
+        }  catch (e) {
+            return false
+        }
     }
 
-    static updatePost(body: PostType, id: string) {
+    // static async createPost(newPost: NewPostDataType): Promise<OutputPostModel | false> {
+    //     try {
+    //
+    //         const blog = await blogsCollection.findOne({_id: new ObjectId(newPost.blogId)})
+    //
+    //         if (blog) {
+    //             const createdDate = (new Date()).toISOString()
+    //             const result = await postsCollection.insertOne(
+    //                 {
+    //                     ...newPost,
+    //                     blogName: blog.name,
+    //                     createdAt: createdDate
+    //                 })
+    //
+    //             return {
+    //                 id: result.insertedId.toString(),
+    //                 ...newPost,
+    //                 blogName: blog.name,
+    //                 createdAt: createdDate
+    //             }
+    //         } else {
+    //             return false
+    //         }
+    //
+    //     } catch (e) {
+    //         return false
+    //     }
+    // }
 
-        let post = postDB.find((post) => post.id === id)
+    static async createPost(newPost: PostDbType): Promise<string | null> {
+        try {
+                const result = await postsCollection.insertOne(
+                    {
+                        ...newPost,
+                        blogName: newPost.blogName
+                    })
 
-        if (!post) {
-            return 404
+                return result.insertedId.toString()
+
+        } catch (e) {
+            return null
+        }
+    }
+
+    static async updatePost(body: PostType, id: string): Promise<boolean> {
+
+        try {
+
+            const result = await postsCollection.updateOne(
+                {_id: new ObjectId(id)},
+                {$set:
+                        {
+                            title: body.title,
+                            shortDescription: body.shortDescription,
+                            content: body.content,
+                            blogId: body.blogId
+                        }})
+
+            return !!result.modifiedCount
+
+        } catch (e) {
+            return false
         }
 
-        Object.assign(post, body);
 
-        return 204
     }
 
-    static deletePost(postId: string) {
-        const postIndex = postDB.findIndex((post) => post.id === postId)
-        if (postIndex === -1) {
-            return 404
+    static async deletePost(postId: string): Promise<boolean> {
+        try {
+
+            const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
+
+            return !!result.deletedCount
+
+        } catch (e) {
+            return false
         }
 
-        postDB.splice(postIndex, 1)
-
-        return 204
     }
 }

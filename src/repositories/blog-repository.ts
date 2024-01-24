@@ -1,48 +1,75 @@
-import {blogDB, BlogType} from "../db/blog-db";
 import {blogsCollection} from "../db/db";
+import {BlogDb} from "../models/blogs/db/blog-db";
+import {ObjectId, WithId} from "mongodb";
+import {OutputBlogType} from "../models/blogs/output/blog-output-model";
+import {blogMapper} from "../models/blogs/mappers/blog-mapper";
+import {UpdateBlogInputModel} from "../models/blogs/input/update.blog.input.model";
 
 export class BlogRepository {
 
-    static async getAll() {
+    static async getBlogById(blogId: string): Promise<BlogDb | null> {
+        try {
 
-        return await blogsCollection.find({}).toArray()
+            const blog = await blogsCollection.findOne({_id: new ObjectId(blogId)})
 
+            if (blog) return blog
+
+            else return null
+
+        } catch (e) {
+
+            return null
+
+        }
     }
 
-    static getBlogById(blogId: string) {
-        const blog = blogDB.find((blog) => blog.id === blogId)
+    static async createBlog(blog: BlogDb): Promise<string | null> {
+        try {
 
-        if(!blog) {
-            return 404
+            const res = await blogsCollection.insertOne(
+                {
+                    name: blog.name,
+                    description: blog.description,
+                    websiteUrl: blog.websiteUrl,
+                    isMembership: false,
+                    createdAt: blog.createdAt
+                })
+
+            return res.insertedId.toString()
+
+        } catch (e) {
+
+            return null
+
+        }
+    }
+
+    static async updateBlog(body: UpdateBlogInputModel, id: string): Promise<boolean> {
+        try {
+
+            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: false, websiteUrl: body.websiteUrl}})
+
+            return !!result.matchedCount
+
+        } catch (e) {
+
+            return false
+
         }
 
-        return  blog
     }
 
-    static createBlog(blog: BlogType) {
-        blogDB.push(blog)
-    }
+    static async deleteBlog(blogId: string): Promise<boolean> {
+        try {
 
-    static updateBlog(body: BlogType, id: string) {
-        let blog = blogDB.find((blog) => blog.id === id)
+            const result = await blogsCollection.deleteOne({_id: new ObjectId(blogId)})
 
-        if (!blog) {
-            return 404
+            return !!result.deletedCount
+
+        } catch (e) {
+
+            return false
+
         }
-
-        Object.assign(blog, body);
-
-        return 204
-    }
-
-    static deleteBlog(blogId: string) {
-        const blogIndex = blogDB.findIndex((blog) => blog.id === blogId)
-        if (blogIndex === -1) {
-            return 404
-        }
-
-        blogDB.splice(blogIndex, 1)
-
-        return 204
     }
 }

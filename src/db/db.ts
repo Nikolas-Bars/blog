@@ -1,12 +1,12 @@
 import dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
-import {PostDb} from "../models/posts/db/post-db";
+import {PostDbType} from "../models/posts/db/post-db";
 import any = jasmine.any;
 
 dotenv.config()
 // указываем порт
-export const port = process.env.PORT || 3005
+export const port = process.env.PORT || 3006
 
 // указываем ссылку для коннекта к базе
 // локальная - mongodb://localhost:27017
@@ -20,7 +20,7 @@ const dataBase = client.db('blogs-db')
 // выбираем нужные коллекции с которыми будем работать
 export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 
-export const postsCollection = dataBase.collection<PostDb>('posts')
+export const postsCollection = dataBase.collection<PostDbType>('posts')
 
 export const runDb = async () => {
     try {

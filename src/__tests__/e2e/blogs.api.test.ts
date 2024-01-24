@@ -1,7 +1,5 @@
 import {app} from "../../app";
 import request from 'supertest'
-import {log} from "util";
-import {BlogDb} from "../../models/blogs/db/blog-db";
 
 describe('/blogs', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -156,14 +154,13 @@ describe('/blogs', () => {
             .auth('admin', 'qwerty')
             .expect(204)
         const blogs = await request(app)
-            .get('/blogs')
-            .expect(200)
+            .get(`/blogs/${blogId}`)
+            .expect(404)
 
-        expect(blogs.body).toEqual([])
+        expect(blogs.body).toEqual({})
     })
 
     it('should be get 404 status', async () => {
-        const { blogId } = expect.getState()
 
         await request(app)
             .delete("/blogs/123")

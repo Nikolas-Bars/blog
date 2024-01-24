@@ -1,5 +1,4 @@
 import {body} from "express-validator";
-import {BlogRepository} from "../repositories/blog-mongo-repository";
 import {inputValidatorMiddleware} from "../middlewares/input-validation-middleware";
 import {blogsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
@@ -32,4 +31,8 @@ const blogIdValidator = body('blogId').isString().withMessage('blogId must be st
 
 export const postValidator = () => {
     return [titleValidator, shortDescriptionValidator, contentValidator, blogIdValidator, inputValidatorMiddleware]
+}
+
+export const postFromBlogValidator = () => {
+    return [titleValidator, shortDescriptionValidator, contentValidator, inputValidatorMiddleware]
 }
