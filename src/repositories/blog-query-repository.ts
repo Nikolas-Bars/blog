@@ -85,7 +85,7 @@ export class BlogQueryRepository {
             const {pageNumber, pageSize, sortBy, sortDirection} = queryData
 
             const posts = await postsCollection
-                .find({blogId: blogId})
+                .find({ blogId: blogId })
                 .sort(sortBy, sortDirection as SortDirection)
                 .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
@@ -108,8 +108,6 @@ export class BlogQueryRepository {
             } else {
                 return null
             }
-
-
 
         } catch(e) {
             console.error(e)
