@@ -5,6 +5,7 @@ import {OutputPostModel} from "../models/posts/output/output-post";
 import {ObjectId} from "mongodb";
 import {PostDbType} from "../models/posts/db/post-db";
 import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
+import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
 
 type NewPostDataType = {
     title: string,
@@ -15,21 +16,21 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    static async getAll(): Promise<OutputPostModel[] | false> {
-
-        try {
-
-            const posts = await postsCollection.find({}).toArray()
-
-            return posts.map((post) => {
-                return postMapper(post)
-            })
-
-        } catch (e) {
-            return false
-        }
-
-    }
+    // static async getAll(): Promise<OutputPostModel[] | false> {
+    //
+    //     try {
+    //
+    //         const posts = await postsCollection.find({}).toArray()
+    //
+    //         return posts.map((post) => {
+    //             return postMapper(post)
+    //         })
+    //
+    //     } catch (e) {
+    //         return false
+    //     }
+    //
+    // }
 
     static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
         try {
@@ -91,7 +92,7 @@ export class PostRepository {
         }
     }
 
-    static async updatePost(body: PostType, id: string): Promise<boolean> {
+    static async updatePost(id: string, body: UpdatePostInputModel): Promise<boolean> {
 
         try {
 

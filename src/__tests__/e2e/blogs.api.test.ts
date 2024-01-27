@@ -1,5 +1,6 @@
 import {app} from "../../app";
 import request from 'supertest'
+import {CreateBlogInputModel} from "../../models/blogs/input/create.blog.input.model";
 
 describe('/blogs', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -11,7 +12,13 @@ describe('/blogs', () => {
     it('should be return 200 and empty array', async () => {
         await request(app)
             .get('/blogs')
-            .expect(200, [])
+            .expect(200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it('should be return status 404', async () => {
@@ -22,11 +29,10 @@ describe('/blogs', () => {
 
     it('should be created new blog', async () => {
 
-        const bodyData = {
+        const bodyData: CreateBlogInputModel = {
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
-            isMembership: false
+            websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
         }
         const response = await request(app)
             .post('/blogs')
@@ -40,7 +46,7 @@ describe('/blogs', () => {
             id: expect.any(String),
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
             isMembership: expect.any(Boolean),
             createdAt: expect.any(String)
         })
@@ -53,7 +59,18 @@ describe('/blogs', () => {
 
         const blogs = getBlogsResponse.body
 
-        expect(blogs).toHaveLength(1)
+        expect(blogs.items).toHaveLength(1)
+
+        expect(blogs.items).toEqual([
+            {
+                id: expect.any(String),
+                name: "new blog name",
+                description: "description blog",
+                websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
+                createdAt: expect.any(String),
+                isMembership: expect.any(Boolean)
+            }
+        ])
     })
 
     it('should be receive an object with a list of errors during post request', async () => {

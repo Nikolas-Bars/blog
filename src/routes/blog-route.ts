@@ -1,14 +1,14 @@
 import express, {Request, Response} from 'express'
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {blogValidator} from "../validators/blog-validator";
-import {BlogRepository} from "../repositories/blog-repository";
 import {OutputBlogType} from "../models/blogs/output/blog-output-model";
 import {ObjectId} from "mongodb";
 import {
     HTTP_RESPONSE_CODES,
     PaginationType,
-    ParamType, RequestWithBody,
-    RequestWithParamsAndBody,
+    ParamType,
+    RequestWithBody, RequestWithParams,
+    RequestWithParamsAndBody, RequestWithParamsAndQuery,
     RequestWithQuery,
     ResponseType
 } from "../models/common";
@@ -20,6 +20,7 @@ import {BlogServices} from "../services/blog.service";
 import {UpdateBlogInputModel} from "../models/blogs/input/update.blog.input.model";
 import {CreateBlogInputModel} from "../models/blogs/input/create.blog.input.model";
 import {OutputPostModel} from "../models/posts/output/output-post";
+import {QueryPostsByBlogIdModel} from "../models/blogs/input/QueryPostsByBlogIdModel";
 
 export const blogRoute = express.Router()
 
@@ -38,7 +39,9 @@ blogRoute.get('/',async (req: RequestWithQuery<QueryBlogInputModel>, res: Respon
     blogs ? res.send(blogs) : res.sendStatus(404)
 })
 
-blogRoute.get('/:id',async (req: Request, res: Response) => {
+blogRoute.get('/:id',async (req: RequestWithParams<ParamType>, res: Response) => {
+
+    const id = req.params.id
 
     if(!ObjectId.isValid(req.params.id)){
         res.sendStatus(404)
@@ -50,6 +53,31 @@ blogRoute.get('/:id',async (req: Request, res: Response) => {
     if (!result) res.sendStatus(404)
 
     else res.send(result)
+
+})
+
+blogRoute.get('/:id/posts', authMiddleware, postFromBlogValidator(), async (req: RequestWithParamsAndQuery<ParamType, QueryPostsByBlogIdModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
+
+    const blogId = req.params.id
+
+    const blog = BlogQueryRepository.getBlogById(blogId)
+
+    if (!blog) {
+        res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
+    }
+
+    const queryData = {
+        sortBy: req.query.sortBy ?? 'createdAt',
+        sortDirection: req.query.sortDirection ?? 'desc',
+        pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
+        pageSize: req.query.pageSize ? +req.query.pageSize : 10
+    }
+
+    const result = await BlogQueryRepository.getPostsByBlogId(blogId, queryData)
+
+    result ? res.send(result) : res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
+
+    return
 
 })
 

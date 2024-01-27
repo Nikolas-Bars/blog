@@ -1,7 +1,6 @@
 import {CreatePostFromBlogInputModel} from "../models/blogs/input/create.post.from.blog.input.model";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {BlogRepository} from "../repositories/blog-repository";
-import {HTTP_RESPONSE_CODES} from "../models/common";
 import {PostDbType} from "../models/posts/db/post-db";
 import {PostRepository} from "../repositories/post-repository";
 import {PostQueryRepository} from "../repositories/post-query-repository";
@@ -17,7 +16,7 @@ export class BlogServices {
 
         const { shortDescription, title, content} = createPostModel
 
-        const blog: BlogDb | null = await BlogRepository.getBlogById(blogId)
+        const blog: BlogDb | null = await BlogQueryRepository.getBlogById(blogId)
 
         if (!blog) {
             return null
@@ -38,9 +37,7 @@ export class BlogServices {
             return null
         }
 
-        const post: OutputPostModel | null = await PostQueryRepository.getPostById(insertedId!)
-
-        return post
+        return await PostQueryRepository.getPostById(insertedId!)
 
     }
 

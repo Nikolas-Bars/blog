@@ -1,5 +1,3 @@
-
-
 export type OutputPostModel = {
     id: string
     title: string

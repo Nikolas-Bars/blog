@@ -1,25 +1,42 @@
-import express, {Request, Response} from 'express'
+import express, {Response} from 'express'
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {PostRepository} from "../repositories/post-repository";
 import {postValidator} from "../validators/post-validator";
 import {OutputPostModel} from "../models/posts/output/output-post";
-import {ObjectId} from "mongodb";
-import {blogsCollection} from "../db/db";
-import {HTTP_RESPONSE_CODES, RequestWithBody} from "../models/common";
+import {
+    HTTP_RESPONSE_CODES,
+    PaginationType,
+    ParamType,
+    RequestWithBody,
+    RequestWithParams,
+    RequestWithParamsAndBody,
+    RequestWithQuery,
+    ResponseType
+} from "../models/common";
 import {PostQueryRepository} from "../repositories/post-query-repository";
 import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
+import {QueryPostInputModel} from "../models/posts/input/query.post.input.model";
+import {PostService} from "../services/post.service";
+import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
 
 export const postRoute = express.Router()
 
-postRoute.get('/',async (req: Request, res: Response) => {
+postRoute.get('/',async (req: RequestWithQuery<QueryPostInputModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
 
-    const posts: OutputPostModel[] | false = await PostRepository.getAll()
+    const queryData = {
+        pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
+        pageSize: req.query.pageSize ? +req.query.pageSize : 10,
+        sortBy: req.query.sortBy ?? 'createdAt',
+        sortDirection: req.query.sortDirection ? req.query.sortDirection : 'desc'
+    }
+
+    const posts: PaginationType<OutputPostModel> | null = await PostQueryRepository.getAll(queryData)
 
     posts ? res.send(posts) : res.sendStatus(404)
 
 })
 
-postRoute.get('/:id',async (req: Request, res: Response) => {
+postRoute.get('/:id',async (req: RequestWithParams<ParamType>, res: Response) => {
 
     const result = await PostRepository.getPostById(req.params.id)
 
@@ -29,55 +46,45 @@ postRoute.get('/:id',async (req: Request, res: Response) => {
 
 postRoute.post('/', authMiddleware, postValidator(), async (req: RequestWithBody<CreatePostInputModel>, res: Response) => {
 
-    const { title, shortDescription, content, blogId } = req.body
-
-    const createdAt = (new Date()).toISOString()
-
-    let newPostId
-
-    const blog = await blogsCollection.findOne({_id: new ObjectId(blogId)})
-
-    if (!blog) {
-        res.sendStatus(HTTP_RESPONSE_CODES.NO_CONTENT)
+    const newPostData: CreatePostInputModel = {
+        title: req.body.title,
+        shortDescription: req.body.shortDescription,
+        content: req.body.content,
+        blogId: req.body.blogId
     }
 
-    const newPostData = {
-        title,
-        shortDescription,
-        content,
-        blogId,
-        createdAt
-    }
+    const newPostId: string | null = await PostService.createPost(newPostData)
 
-    if (blog) {
-        newPostId = await PostRepository.createPost({...newPostData, blogName: blog.name})
-    }
+    let createdPost
 
     if (!newPostId) {
-        res.sendStatus(HTTP_RESPONSE_CODES.NO_CONTENT)
-    }
-
-    const createdPost = await PostQueryRepository.getPostById(newPostId!)
-
-    if (!createdPost) {
-        res.sendStatus(HTTP_RESPONSE_CODES.NO_CONTENT)
+        res.sendStatus(HTTP_RESPONSE_CODES.BAD_REQUEST)
+    } else {
+        createdPost = PostQueryRepository.getPostById(newPostId)
     }
 
     res.status(201).json(createdPost)
 
 })
 
-postRoute.put('/:id', authMiddleware, postValidator(), async (req: Request, res: Response) => {
+postRoute.put('/:id', authMiddleware, postValidator(), async (req: RequestWithParamsAndBody<ParamType, UpdatePostInputModel>, res: Response) => {
 
-    const result: boolean = await PostRepository.updatePost(req.body, req.params.id)
+    const updateData = {
+        title: req.body.title,
+        shortDescription: req.body.shortDescription,
+        content: req.body.content,
+        blogId: req.body.blogId
+    }
+
+    const result: boolean = await PostService.updatePost(req.params.id, updateData)
 
     result ? res.sendStatus(204) : res.sendStatus(404)
 
 })
 
-postRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+postRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType>, res: Response) => {
 
-    const result: boolean = await PostRepository.deletePost(req.params.id)
+    const result: boolean = await PostService.deletePost(req.params.id)
 
     result ? res.sendStatus(204) : res.sendStatus(404)
 

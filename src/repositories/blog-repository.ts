@@ -1,27 +1,9 @@
 import {blogsCollection} from "../db/db";
 import {BlogDb} from "../models/blogs/db/blog-db";
-import {ObjectId, WithId} from "mongodb";
-import {OutputBlogType} from "../models/blogs/output/blog-output-model";
-import {blogMapper} from "../models/blogs/mappers/blog-mapper";
+import {ObjectId} from "mongodb";
 import {UpdateBlogInputModel} from "../models/blogs/input/update.blog.input.model";
 
 export class BlogRepository {
-
-    static async getBlogById(blogId: string): Promise<BlogDb | null> {
-        try {
-
-            const blog = await blogsCollection.findOne({_id: new ObjectId(blogId)})
-
-            if (blog) return blog
-
-            else return null
-
-        } catch (e) {
-
-            return null
-
-        }
-    }
 
     static async createBlog(blog: BlogDb): Promise<string | null> {
         try {
