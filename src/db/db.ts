@@ -6,7 +6,7 @@ import any = jasmine.any;
 
 dotenv.config()
 // указываем порт
-export const port = process.env.PORT || 3006
+export const port = process.env.PORT || 3007
 
 // указываем ссылку для коннекта к базе
 // локальная - mongodb://localhost:27017

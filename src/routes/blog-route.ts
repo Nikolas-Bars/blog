@@ -127,11 +127,9 @@ blogRoute.post('/:id/posts', authMiddleware, postFromBlogValidator(), async (req
 
     if (result) {
         res.status(HTTP_RESPONSE_CODES.CREATED).json(result)
+    } else {
+        res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
     }
-
-    res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
-
-    console.log('bla')
 
     return
 

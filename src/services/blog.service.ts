@@ -17,7 +17,7 @@ export class BlogServices {
         const { shortDescription, title, content} = createPostModel
 
         const blog: BlogDb | null = await BlogQueryRepository.getBlogById(blogId)
-        
+
         if (!blog) {
             return null
         }
