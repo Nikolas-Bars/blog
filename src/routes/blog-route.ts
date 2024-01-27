@@ -58,11 +58,11 @@ blogRoute.get('/:id',async (req: RequestWithParams<ParamType>, res: Response) =>
 
 blogRoute.get('/:id/posts', authMiddleware, postFromBlogValidator(), async (req: RequestWithParamsAndQuery<ParamType, QueryPostsByBlogIdModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
 
-    const blogId = req.params.id
-
-    if (!blogId) {
+    if (!req.params.id) {
         res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
     }
+
+    const blogId = req.params.id
 
     const blog = BlogQueryRepository.getBlogById(blogId)
 
