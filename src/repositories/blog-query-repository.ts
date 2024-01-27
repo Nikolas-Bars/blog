@@ -95,15 +95,21 @@ export class BlogQueryRepository {
 
             const pagesCount = Math.ceil(totalCount / pageSize)
 
-            return {
-                pagesCount: pagesCount,
-                page: pageNumber,
-                pageSize: pageSize,
-                totalCount: totalCount,
-                items: posts.map((post) => {
-                    return postMapper(post)
-                })
+            if (posts.length) {
+                return {
+                    pagesCount: pagesCount,
+                    page: pageNumber,
+                    pageSize: pageSize,
+                    totalCount: totalCount,
+                    items: posts.map((post) => {
+                        return postMapper(post)
+                    })
+                }
+            } else {
+                return null
             }
+
+
 
         } catch(e) {
             console.error(e)
