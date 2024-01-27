@@ -89,6 +89,7 @@ export class BlogQueryRepository {
                 .sort(sortBy, sortDirection as SortDirection)
                 .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
+                .toArray()
 
             const totalCount = await postsCollection.countDocuments({blogId: blogId})
 
