@@ -115,7 +115,6 @@ blogRoute.post('/:id/posts', authMiddleware, postFromBlogValidator(), async (req
 
     if(!ObjectId.isValid(id)){
         res.sendStatus(404)
-        return
     }
 
     const data: CreatePostFromBlogInputModel = {
@@ -130,7 +129,11 @@ blogRoute.post('/:id/posts', authMiddleware, postFromBlogValidator(), async (req
         res.status(HTTP_RESPONSE_CODES.CREATED).json(result)
     }
 
-    res.status(HTTP_RESPONSE_CODES.NOT_FOUND)
+    res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
+
+    console.log('bla')
+
+    return
 
 })
 
