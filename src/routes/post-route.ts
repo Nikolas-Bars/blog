@@ -63,8 +63,6 @@ postRoute.post('/', authMiddleware, postValidator(), async (req: RequestWithBody
         createdPost = await PostQueryRepository.getPostById(newPostId)
     }
 
-    console.log(createdPost, 'createdPost')
-
     res.status(201).json(createdPost)
 
 })

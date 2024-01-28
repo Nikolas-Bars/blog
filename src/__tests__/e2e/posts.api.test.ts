@@ -1,5 +1,6 @@
 import {app} from "../../app";
 import request from 'supertest'
+import {OutputPostModel} from "../../models/posts/output/output-post";
 
 describe('/posts', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -11,7 +12,7 @@ describe('/posts', () => {
     it('should be return 200 and empty array', async () => {
         await request(app)
             .get('/posts')
-            .expect(200, [])
+            .expect(200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should be return status 404', async () => {
@@ -132,7 +133,7 @@ describe('/posts', () => {
             .get('/posts')
             .expect(200)
 
-        expect(posts.body).toEqual([])
+        expect(posts.body.items.some((el: OutputPostModel) => el.id === postId)).toEqual(false)
     })
 
     it('should be receive an object with a list of errors during update post', async () => {

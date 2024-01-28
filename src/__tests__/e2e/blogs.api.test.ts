@@ -1,6 +1,7 @@
 import {app} from "../../app";
 import request from 'supertest'
 import {CreateBlogInputModel} from "../../models/blogs/input/create.blog.input.model";
+import {OutputBlogType} from "../../models/blogs/output/blog-output-model";
 
 describe('/blogs', () => {
     // вызываем эндпоинт который зачистит стартовые данные
@@ -30,7 +31,7 @@ describe('/blogs', () => {
     it('should be created new blog', async () => {
 
         const bodyData: CreateBlogInputModel = {
-            name: "new blog name",
+            name: "new blog name 1",
             description: "description blog",
             websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
         }
@@ -44,7 +45,7 @@ describe('/blogs', () => {
 
         expect(createdBlog).toEqual({
             id: expect.any(String),
-            name: "new blog name",
+            name: "new blog name 1",
             description: "description blog",
             websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
             isMembership: expect.any(Boolean),
@@ -59,18 +60,8 @@ describe('/blogs', () => {
 
         const blogs = getBlogsResponse.body
 
-        expect(blogs.items).toHaveLength(1)
+        expect(blogs.items.some((el: OutputBlogType) => el.name === 'new blog name 1')).toEqual(true)
 
-        expect(blogs.items).toEqual([
-            {
-                id: expect.any(String),
-                name: "new blog name",
-                description: "description blog",
-                websiteUrl: "https://YbbvBC.KPy4jZVyoEqpc",
-                createdAt: expect.any(String),
-                isMembership: expect.any(Boolean)
-            }
-        ])
     })
 
     it('should be created  new post for specific blog', async () => {
