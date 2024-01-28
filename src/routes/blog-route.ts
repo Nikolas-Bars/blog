@@ -56,7 +56,7 @@ blogRoute.get('/:id',async (req: RequestWithParams<ParamType>, res: Response) =>
 
 })
 
-blogRoute.get('/:id/posts', postFromBlogValidator(), async (req: RequestWithParamsAndQuery<ParamType, QueryPostsByBlogIdModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
+blogRoute.get('/:id/posts', async (req: RequestWithParamsAndQuery<ParamType, QueryPostsByBlogIdModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
 
     const blogId = req.params.id
 

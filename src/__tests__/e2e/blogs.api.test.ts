@@ -73,6 +73,60 @@ describe('/blogs', () => {
         ])
     })
 
+    it('should be created  new post for specific blog', async () => {
+
+        const { blogId } = expect.getState()
+
+        const postBodyData = {
+            title: "post title",
+            shortDescription: "post for specific blog",
+            content: "some content"
+        }
+
+        const result = await request(app)
+            .post(`/blogs/${blogId}/posts`)
+            .auth('admin', 'qwerty')
+            .send(postBodyData)
+            .expect(201)
+
+        expect(result.body).toEqual({
+            id: expect.any(String),
+            title: "post title",
+            shortDescription: "post for specific blog",
+            content: expect.any(String),
+            blogId: blogId,
+            blogName: expect.any(String),
+            createdAt: expect.any(String)
+        })
+    })
+
+    it('should be get paginated posts for specific blog', async () => {
+
+        const { blogId } = expect.getState()
+
+        const result = await request(app)
+            .get(`/blogs/${ blogId }/posts?pageSize=100&pageNumber=1`)
+            .expect(200)
+
+        expect(result.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 100,
+            totalCount: 1,
+            items: [
+                {
+                    id: expect.any(String),
+                    title: "post title",
+                    shortDescription: "post for specific blog",
+                    content: expect.any(String),
+                    blogId: blogId,
+                    blogName: expect.any(String),
+                    createdAt: expect.any(String)
+                }
+            ]
+        })
+    })
+
     it('should be receive an object with a list of errors during post request', async () => {
         const bodyData = {
             name: "     ",
