@@ -61,14 +61,14 @@ blogRoute.get('/:id/posts', postFromBlogValidator(), async (req: RequestWithPara
     const blogId = req.params.id
 
     if (!ObjectId.isValid(blogId)) {
-        res.sendStatus(404)
+        res.status(404)
         return
     }
 
     const blog = BlogQueryRepository.getBlogById(blogId)
 
     if (!blog) {
-        res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
+        res.status(HTTP_RESPONSE_CODES.NOT_FOUND)
         return
     }
 
@@ -104,7 +104,8 @@ blogRoute.post('/', authMiddleware, blogValidator(), async (req: RequestWithBody
         res.status(201).json(result)
 
     } else {
-        res.sendStatus(404)
+        res.status(404)
+        return
     }
 
 })
