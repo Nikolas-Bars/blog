@@ -60,8 +60,10 @@ postRoute.post('/', authMiddleware, postValidator(), async (req: RequestWithBody
     if (!newPostId) {
         res.sendStatus(HTTP_RESPONSE_CODES.BAD_REQUEST)
     } else {
-        createdPost = PostQueryRepository.getPostById(newPostId)
+        createdPost = await PostQueryRepository.getPostById(newPostId)
     }
+
+    console.log(createdPost, 'createdPost')
 
     res.status(201).json(createdPost)
 
