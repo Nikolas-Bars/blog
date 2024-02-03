@@ -3,6 +3,7 @@ import {MongoClient} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDbType} from "../models/posts/db/post-db";
 import any = jasmine.any;
+import {UserDbType} from "../models/users/db/user-db";
 
 dotenv.config()
 // указываем порт
@@ -12,7 +13,7 @@ export const port = process.env.PORT || 3007
 // локальная - mongodb://localhost:27017
 // atlas "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/"
 
-const uri = process.env.MONGO_URI || "mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/"
+const uri = process.env.MONGO_URI || "mongodb://localhost:27017"
 
 const client = new MongoClient(uri)
 // указываем к какой конкретно базе коннектимся
@@ -21,6 +22,8 @@ const dataBase = client.db('blogs-db')
 export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 
 export const postsCollection = dataBase.collection<PostDbType>('posts')
+
+export const usersCollection = dataBase.collection<UserDbType>('users')
 
 export const runDb = async () => {
     try {

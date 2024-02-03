@@ -48,35 +48,6 @@ export class PostRepository {
         }
     }
 
-    // static async createPost(newPost: NewPostDataType): Promise<OutputPostModel | false> {
-    //     try {
-    //
-    //         const blog = await blogsCollection.findOne({_id: new ObjectId(newPost.blogId)})
-    //
-    //         if (blog) {
-    //             const createdDate = (new Date()).toISOString()
-    //             const result = await postsCollection.insertOne(
-    //                 {
-    //                     ...newPost,
-    //                     blogName: blog.name,
-    //                     createdAt: createdDate
-    //                 })
-    //
-    //             return {
-    //                 id: result.insertedId.toString(),
-    //                 ...newPost,
-    //                 blogName: blog.name,
-    //                 createdAt: createdDate
-    //             }
-    //         } else {
-    //             return false
-    //         }
-    //
-    //     } catch (e) {
-    //         return false
-    //     }
-    // }
-
     static async createPost(newPost: PostDbType): Promise<string | null> {
         try {
                 const result = await postsCollection.insertOne(
