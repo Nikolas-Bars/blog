@@ -19,6 +19,6 @@ app.use('/posts', postRoute)
 
 app.use('/users', userRoute)
 
-app.use('/login', authRoute)
+app.use('/auth', authRoute)
 
 app.use('/testing/all-data', deleteAllDataRoute)
