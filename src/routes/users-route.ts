@@ -40,7 +40,7 @@ userRoute.post('/', authMiddleware, userCreateValidator(), async (req: RequestWi
     }
 })
 
-userRoute.delete('/:id', async (req: RequestWithParams<ParamType>, res: Response) => {
+userRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType>, res: Response) => {
 
     const result = await UserService.deleteUser(req.params.id)
 
