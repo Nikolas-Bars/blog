@@ -1,15 +1,13 @@
 import {app} from "../../app";
 import request from 'supertest'
-import {OutputPostModel} from "../../models/posts/output/output-post";
-import {UserDbType} from "../../models/users/db/user-db";
 import {CreateUsers} from "../utils/users-utils";
 
 describe('/users', () => {
-    // вызываем эндпоинт который зачистит стартовые данные
-    // beforeAll(async () => {
-    //     await request(app)
-    //         .delete('/testing/all-data')
-    // })
+
+    beforeAll(async () => {
+        await request(app)
+            .delete('/testing/all-data')
+    })
 
    it('should be get users paginated list', async () => {
 
@@ -22,38 +20,39 @@ describe('/users', () => {
                sortDirection: 'desc',
                pageNumber: 1,
                pageSize: 10,
-               searchLoginTerm: 'ivanov',
-               searchEmailTerm: '@gmail.ru'
+               searchLoginTerm: 'ivanobla2',
+               searchEmailTerm: 'test4@gmail.ru'
            })
 
        expect(result.body).toEqual({
            pagesCount: 1,
            page: 1,
            pageSize: 10,
-           totalCount: 3,
+           totalCount: 2,
            items: expect.any(Array)
        })
 
-       expect(result.body.items).toHaveLength(3);
+       expect(result.body.items).toHaveLength(2);
    })
 
     it('should be created new user', async () => {
 
         const data = {
-            login: "ivanov bla",
+            login: "ivanobla",
             password: "string",
-            email: "@gmail.ru"
+            email: "dd@gmail.ru"
         }
 
         const result = await request(app)
             .post('/users')
+            .auth('admin', 'qwerty')
             .send(data)
             .expect(201)
 
         expect(result.body).toEqual({
             id: expect.any(String),
-            login: "ivanov bla",
-            email: '@gmail.ru',
+            login: "ivanobla",
+            email: 'dd@gmail.ru',
             createdAt: expect.any(String)
         })
 
@@ -66,24 +65,9 @@ describe('/users', () => {
 
         const result = await request(app)
             .delete(`/users/${id}`)
+            .auth('admin', 'qwerty')
             .expect(204)
-
-        expect(result.body).toEqual({
-            errorsMessages: [
-                {
-                    message: expect.any(String),
-                    field: "password"
-                },
-                {
-                    message: expect.any(String),
-                    field: "login"
-                },
-                {
-                    message: expect.any(String),
-                    field: "email"
-                }
-            ]
-        })
+            .auth('admin', 'qwerty')
     })
 
     it('should be get errors array - email, password and login', async () => {
@@ -96,6 +80,7 @@ describe('/users', () => {
 
         const result = await request(app)
             .post('/users')
+            .auth('admin', 'qwerty')
             .send(data)
             .expect(400)
 
@@ -103,11 +88,11 @@ describe('/users', () => {
             errorsMessages: [
                 {
                     message: expect.any(String),
-                    field: "password"
+                    field: "login"
                 },
                 {
                     message: expect.any(String),
-                    field: "login"
+                    field: "password"
                 },
                 {
                     message: expect.any(String),
