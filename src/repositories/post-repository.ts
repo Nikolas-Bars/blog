@@ -88,7 +88,6 @@ export class PostRepository {
 
     static async deletePost(postId: string): Promise<boolean> {
         try {
-
             const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
 
             return !!result.deletedCount
@@ -96,6 +95,18 @@ export class PostRepository {
         } catch (e) {
             return false
         }
+    }
 
+    static async deletePostsByBlogId(blogId: string): Promise<boolean> {
+        try {
+            const result = await postsCollection.deleteMany({ blogId: blogId })
+
+            console.log(result.deletedCount, 'result')
+
+            return !!result.deletedCount
+
+        } catch (e) {
+            return false
+        }
     }
 }

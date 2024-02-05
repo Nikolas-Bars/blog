@@ -104,7 +104,6 @@ blogRoute.post('/', authMiddleware, blogValidator(), async (req: RequestWithBody
     } else {
         res.sendStatus(404)
     }
-
 })
 
 blogRoute.post('/:id/posts', authMiddleware, postFromBlogValidator(), async (req: RequestWithParamsAndBody<ParamType, CreatePostFromBlogInputModel>, res: ResponseType<OutputPostModel>) => {
