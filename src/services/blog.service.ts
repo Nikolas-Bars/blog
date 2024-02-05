@@ -48,8 +48,20 @@ export class BlogServices {
     }
 
     static async deleteBlogService(blogId: string): Promise<boolean> {
+        try {
+            const result = await BlogRepository.deleteBlog(blogId)
 
-        return await BlogRepository.deleteBlog(blogId)
+            if (result) {
+                return await PostRepository.deletePostsByBlogId(blogId)
+            } else {
+                return false
+            }
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
 
     }
 
