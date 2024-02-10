@@ -2,7 +2,7 @@ import {UserRepository} from "../repositories/user-repository";
 import bcrypt from "bcrypt";
 import {CreateUserInputModel} from "../models/users/input/create.user.input.model";
 import {OutputUser} from "../models/users/output/output-user";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 
 export class UserService {
@@ -31,30 +31,21 @@ export class UserService {
             return null
         }
     }
-
-    static async deleteUser(id: string): Promise<boolean> {
-
-        return await UserRepository.deleteUserById(id)
-
+    static async doesExistsById(id: string): Promise<boolean> {
+        console.log(123)
+        const user = await UserRepository.getUserById(new ObjectId(id))
+        console.log('joap', 123)
+        return !!user
     }
-
     static async _generateHash(password: string, salt: string) {
 
         return await bcrypt.hash(password, salt)
 
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
+    static async deleteUser(id: string): Promise<boolean> {
 
-        const user: UserDbType | null = await UserRepository.findByLoginOrEmail(loginOrEmail)
-
-        if (!user) {
-            return false
-        }
-
-        const passwordHash = await this._generateHash(password, user.salt)
-
-        return passwordHash === user.password;
+        return await UserRepository.deleteUserById(id)
 
     }
 }

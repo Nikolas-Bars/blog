@@ -1,8 +1,6 @@
-import {postsCollection, usersCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
+import {usersCollection} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
-import {PaginationType, ResponseType} from "../models/common";
+import {PaginationType} from "../models/common";
 import {QueryUserInputModel} from "../models/users/input/query.user.input.model";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
@@ -83,5 +81,9 @@ export class UserQueryRepository {
             email: users.email,
             login: users.login
         }
+    }
+
+    static async findMeById(uerId: string) {
+        const result = await usersCollection.findOne({_id: new ObjectId(uerId)})
     }
 }

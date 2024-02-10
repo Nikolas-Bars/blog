@@ -2,12 +2,11 @@ import dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDbType} from "../models/posts/db/post-db";
-import any = jasmine.any;
 import {UserDbType} from "../models/users/db/user-db";
 
 dotenv.config()
 // указываем порт
-export const port = process.env.PORT || 3007
+export const port = process.env.PORT || 3010
 
 // указываем ссылку для коннекта к базе
 // локальная - mongodb://localhost:27017

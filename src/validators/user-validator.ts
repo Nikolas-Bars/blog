@@ -21,7 +21,8 @@ const emailValidator = body('email')
     .isString().withMessage('content must be string type').trim()
     .notEmpty().isEmail().withMessage('incorrect email value')
     .custom(async (email) => {
-        const user = await usersCollection.findOne({email: email})
+        const user = await usersCollection.findOne({ email: email })
+
         if (!user) {
             return true;
 
