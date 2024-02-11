@@ -1,26 +1,16 @@
-import express, {Response, Request} from 'express'
+import express, {Response} from 'express'
 import {RequestWithBody} from "../models/common";
+import {UserService} from "../services/user.service";
 import {InputAuthModel} from "../models/auth/input/input-auth-model";
-import {AuthService} from "../services/auth.service";
-import {authValidator} from "../validators/login-validator";
-import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 
 export const authRoute = express.Router()
 
-authRoute.post('/login', authValidator(), async (req: RequestWithBody<InputAuthModel>, res: Response) => {
+authRoute.post('/login', async (req: RequestWithBody<InputAuthModel>, res: Response) => {
 
-    const token: string | false = await AuthService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const checkResult = await UserService.checkCredentials(req.body.loginOrEmail, req.body.password)
 
-    if (!token) return res.sendStatus(401)
+    console.log(checkResult, 'checkResult')
 
-    const tokenObject = {
-        accessToken: token
-    }
-
-    return res.status(200).json(tokenObject)
-
-})
-
-authRoute.get('/me', accessTokenGuard, async (req: Request, res: Response) => {
+    return checkResult ?  res.sendStatus(204) : res.sendStatus(401)
 
 })
