@@ -4,13 +4,7 @@ import {PaginationType} from "../models/common";
 import {QueryUserInputModel} from "../models/users/input/query.user.input.model";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
-
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
+import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
 
 export type QueryPostDataType = {
     pageNumber: number
@@ -83,7 +77,27 @@ export class UserQueryRepository {
         }
     }
 
-    static async findMeById(uerId: string) {
-        const result = await usersCollection.findOne({_id: new ObjectId(uerId)})
+    static async getCommentatorById(commentatorId: string): Promise<CommentatorInfo | null> {
+        try {
+
+            const commentator = await usersCollection.findOne({_id: new ObjectId(commentatorId)})
+
+            if (!commentator) {
+                return null
+            } else {
+                return {
+                    userId: commentator._id.toString(),
+                    userLogin: commentator.login
+                }
+            }
+
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+        }
+
     }
 }

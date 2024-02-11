@@ -3,6 +3,7 @@ import {MongoClient} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDbType} from "../models/posts/db/post-db";
 import {UserDbType} from "../models/users/db/user-db";
+import {CommentInputType} from "../models/comments/input/comment-input";
 
 dotenv.config()
 // указываем порт
@@ -23,6 +24,8 @@ export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 export const postsCollection = dataBase.collection<PostDbType>('posts')
 
 export const usersCollection = dataBase.collection<UserDbType>('users')
+
+export const commentsCollection = dataBase.collection<CommentInputType>('users')
 
 export const runDb = async () => {
     try {

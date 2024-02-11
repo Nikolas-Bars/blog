@@ -2,8 +2,7 @@ import {UserRepository} from "../repositories/user-repository";
 import bcrypt from "bcrypt";
 import {CreateUserInputModel} from "../models/users/input/create.user.input.model";
 import {OutputUser} from "../models/users/output/output-user";
-import {ObjectId, WithId} from "mongodb";
-import {UserDbType} from "../models/users/db/user-db";
+import {ObjectId} from "mongodb";
 
 export class UserService {
 

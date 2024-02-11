@@ -2,6 +2,12 @@ import {CreatePostInputModel} from "../models/posts/input/create.post.input.mode
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
 import {PostRepository} from "../repositories/post-repository";
 import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {PostQueryRepository} from "../repositories/post-query-repository";
+import {OutputPostModel} from "../models/posts/output/output-post";
+import {UserQueryRepository} from "../repositories/user-query-repository";
+import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
+import {CommentInputType} from "../models/comments/input/comment-input";
+import {CommentRepository} from "../repositories/comment-repository";
 
 export class PostService {
     static async createPost(data: CreatePostInputModel): Promise<string | null> {
@@ -27,6 +33,39 @@ export class PostService {
     static async updatePost(postId: string, data: UpdatePostInputModel): Promise<boolean> {
 
         return await PostRepository.updatePost(postId, data)
+
+    }
+
+    static async createCommentForPost(postId: string, userId: string, commentatorId: string, content: string): Promise<string | null> {
+        try {
+            const post: OutputPostModel | null = await PostQueryRepository.getPostById(postId)
+
+            if (!post) {
+                return null
+            }
+
+            const commentator: CommentatorInfo | null = await UserQueryRepository.getCommentatorById(commentatorId)
+
+            if (post && commentator) {
+                const commentData: CommentInputType = {
+                    content: content,
+                    commentatorInfo: {
+                        ...commentator
+                    },
+                    createdAt: (new Date()).toISOString(),
+                    postId: postId
+                }
+
+                return await CommentRepository.createComment(commentData)
+            } else {
+                return null
+            }
+
+        } catch(e) {
+            console.error(e)
+
+            return null
+        }
 
     }
 
