@@ -52,7 +52,9 @@ export class BlogServices {
             const result = await BlogRepository.deleteBlog(blogId)
 
             if (result) {
+
                 return await PostRepository.deletePostsByBlogId(blogId)
+
             } else {
                 return false
             }
