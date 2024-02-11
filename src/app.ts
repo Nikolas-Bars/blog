@@ -4,6 +4,7 @@ import {postRoute} from "./routes/post-route";
 import {deleteAllDataRoute} from "./routes/test-delete-route";
 import {userRoute} from "./routes/users-route";
 import {authRoute} from "./routes/auth-route";
+import {commentsRouter} from "./routes/comments-route";
 
 export const app = express()
 
@@ -21,6 +22,6 @@ app.use('/users', userRoute)
 
 app.use('/auth', authRoute)
 
-// app.use('/comments', commentsRouter)
+app.use('/comments', commentsRouter)
 
 app.use('/testing/all-data', deleteAllDataRoute)
