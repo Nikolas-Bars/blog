@@ -30,7 +30,7 @@ userRoute.get('/', async (req: RequestWithQuery<QueryUserInputModel>, res: Respo
     }
 })
 
-userRoute.post('/', accessTokenGuard, userCreateValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
+userRoute.post('/', authMiddleware, userCreateValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
 
     const result: OutputUser | null = await UserService.createUser(req.body)
 
