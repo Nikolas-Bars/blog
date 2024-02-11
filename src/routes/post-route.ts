@@ -88,7 +88,7 @@ postRoute.post('/:postId/comments', accessTokenGuard, commentValidator(), async 
     } else {
         const comment: CommentOutputType | null = await CommentsService.getCommentById(resultId)
 
-        return comment ? res.send(comment) : res.sendStatus(404)
+        return comment ? res.status(201).send(comment) : res.sendStatus(404)
     }
 
 })
