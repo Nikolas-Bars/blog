@@ -99,11 +99,10 @@ export class PostRepository {
 
     static async deletePostsByBlogId(blogId: string): Promise<boolean> {
         try {
-            const result = await postsCollection.deleteMany({ blogId: blogId })
 
-            console.log(result.deletedCount, 'result')
+            await postsCollection.deleteMany({ blogId: blogId })
 
-            return !!result.deletedCount
+            return true
 
         } catch (e) {
             return false
