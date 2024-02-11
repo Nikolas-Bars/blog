@@ -1,18 +1,10 @@
-import {postsCollection, usersCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
+import {usersCollection} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
-import {PaginationType, ResponseType} from "../models/common";
+import {PaginationType} from "../models/common";
 import {QueryUserInputModel} from "../models/users/input/query.user.input.model";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
-
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
+import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
 
 export type QueryPostDataType = {
     pageNumber: number
@@ -83,5 +75,29 @@ export class UserQueryRepository {
             email: users.email,
             login: users.login
         }
+    }
+
+    static async getCommentatorById(commentatorId: string): Promise<CommentatorInfo | null> {
+        try {
+
+            const commentator = await usersCollection.findOne({_id: new ObjectId(commentatorId)})
+
+            if (!commentator) {
+                return null
+            } else {
+                return {
+                    userId: commentator._id.toString(),
+                    userLogin: commentator.login
+                }
+            }
+
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+        }
+
     }
 }

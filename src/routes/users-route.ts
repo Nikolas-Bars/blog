@@ -15,10 +15,11 @@ import {UserService} from "../services/user.service";
 import {OutputUser} from "../models/users/output/output-user";
 import {userCreateValidator} from "../validators/user-validator";
 import {authMiddleware} from "../middlewares/auth-middleware";
+import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 
 export const userRoute = express.Router()
 
-userRoute.get('/',async (req: RequestWithQuery<QueryUserInputModel>, res: ResponseType<PaginationType<OutputUser>>) => {
+userRoute.get('/', async (req: RequestWithQuery<QueryUserInputModel>, res: ResponseType<PaginationType<OutputUser>>) => {
 
     const users: PaginationType<OutputUser> | null = await UserQueryRepository.getUsers(req.query)
 
@@ -29,7 +30,7 @@ userRoute.get('/',async (req: RequestWithQuery<QueryUserInputModel>, res: Respon
     }
 })
 
-userRoute.post('/', authMiddleware, userCreateValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
+userRoute.post('/', accessTokenGuard, userCreateValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
 
     const result: OutputUser | null = await UserService.createUser(req.body)
 

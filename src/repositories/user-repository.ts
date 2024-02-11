@@ -1,5 +1,5 @@
 import {usersCollection} from "../db/db";
-import {ObjectId, SortDirection} from "mongodb";
+import {ObjectId, SortDirection, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
 
@@ -37,10 +37,11 @@ export class UserRepository {
 
     static async getUserById(id: ObjectId): Promise<OutputUser | null> {
         try {
+            console.log(id, 'for result')
             const result = await usersCollection.findOne({ _id: id })
 
             let user;
-
+            console.log(result, '123result')
             if (result) {
                 user = {
                     createdAt: result.createdAt,
@@ -51,7 +52,7 @@ export class UserRepository {
             } else {
                 return null
             }
-
+            console.log(user, '1234user')
             return user
 
         } catch (e) {
@@ -64,14 +65,24 @@ export class UserRepository {
 
     }
 
-    static async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
+    static async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbType> | null> {
         try {
-            return  await usersCollection.findOne({
+            const result = await usersCollection.findOne({
                 $or: [
                     {email: loginOrEmail},
                     {login: loginOrEmail},
                 ]
             })
+
+            if (result) {
+                return {
+                    ...result,
+                    _id: result._id
+                }
+            } else {
+                return null
+            }
+
         } catch(e) {
             console.error(e)
 

@@ -24,7 +24,7 @@ import {QueryPostsByBlogIdModel} from "../models/blogs/input/QueryPostsByBlogIdM
 
 export const blogRoute = express.Router()
 
-blogRoute.get('/',async (req: RequestWithQuery<QueryBlogInputModel>, res: Response)  => {
+blogRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModel>, res: Response)  => {
 
     const sortData = {
         searchNameTerm: req.query.searchNameTerm ?? null,
@@ -148,10 +148,9 @@ blogRoute.put('/:id', authMiddleware, blogValidator(), async (req: RequestWithPa
 })
 
 blogRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-
     const blogId = req.params.id
 
-    if(!ObjectId.isValid(req.params.id)){
+    if (!ObjectId.isValid(req.params.id)) {
         res.sendStatus(404)
         return
     }

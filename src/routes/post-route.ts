@@ -1,4 +1,4 @@
-import express, {Response} from 'express'
+import express, {Request, Response} from 'express'
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {PostRepository} from "../repositories/post-repository";
 import {postValidator} from "../validators/post-validator";
@@ -18,6 +18,10 @@ import {CreatePostInputModel} from "../models/posts/input/create.post.input.mode
 import {QueryPostInputModel} from "../models/posts/input/query.post.input.model";
 import {PostService} from "../services/post.service";
 import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {accessTokenGuard} from "../middlewares/accessTokenGuard";
+import {CommentsService} from "../services/comments.service";
+import {CommentOutputType} from "../models/comments/output/comment-output";
+import {commentValidator} from "../validators/comment-validator";
 
 export const postRoute = express.Router()
 
@@ -64,6 +68,28 @@ postRoute.post('/', authMiddleware, postValidator(), async (req: RequestWithBody
     }
 
     res.status(201).json(createdPost)
+
+})
+
+postRoute.post('/:postId/comments', accessTokenGuard, commentValidator(), async (req: Request, res: Response) => {
+
+    const postId = req.params.postId
+
+    const content: string = req.body.content
+
+    const commentatorId = req.userId
+
+    const resultId = await PostService.createCommentForPost(postId, content, commentatorId, content)
+
+    if (!resultId) {
+
+        return res.sendStatus(404)
+
+    } else {
+        const comment: CommentOutputType | null = await CommentsService.getCommentById(resultId)
+
+        return comment ? res.send(comment) : res.sendStatus(404)
+    }
 
 })
 
