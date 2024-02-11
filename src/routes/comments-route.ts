@@ -4,7 +4,7 @@ import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 
 export const commentsRouter = express.Router()
 
-commentsRouter.get('/:commentId', accessTokenGuard, async (req: Request, res: Response)=> {
+commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
 
     const id = req.params.commentId
 
