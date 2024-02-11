@@ -21,4 +21,6 @@ app.use('/users', userRoute)
 
 app.use('/auth', authRoute)
 
+// app.use('/comments', commentsRouter)
+
 app.use('/testing/all-data', deleteAllDataRoute)
