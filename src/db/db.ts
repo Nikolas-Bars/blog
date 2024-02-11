@@ -25,7 +25,7 @@ export const postsCollection = dataBase.collection<PostDbType>('posts')
 
 export const usersCollection = dataBase.collection<UserDbType>('users')
 
-export const commentsCollection = dataBase.collection<CommentInputType>('users')
+export const commentsCollection = dataBase.collection<CommentInputType>('comments')
 
 export const runDb = async () => {
     try {

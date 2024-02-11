@@ -3,13 +3,6 @@ import {ObjectId} from "mongodb";
 import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
-
 export class CommentRepository {
 
     static async createComment(newPost: CommentInputType): Promise<string | null> {
