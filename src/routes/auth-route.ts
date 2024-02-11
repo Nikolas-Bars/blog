@@ -11,6 +11,6 @@ authRoute.post('/login', async (req: RequestWithBody<InputAuthModel>, res: Respo
 
     console.log(checkResult, 'checkResult')
 
-    return checkResult ?  res.sendStatus(204) : res.sendStatus(401)
+    return checkResult ?  res.sendStatus(200) : res.sendStatus(401)
 
 })
