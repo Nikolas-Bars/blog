@@ -117,7 +117,7 @@ postRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType
 
 })
 
-postRoute.get('/:postId/comments', accessTokenGuard, async (req: Request, res: Response) => {
+postRoute.get('/:postId/comments', async (req: Request, res: Response) => {
 
     const postId = req.params.postId
 
