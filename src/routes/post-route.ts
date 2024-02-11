@@ -81,7 +81,7 @@ postRoute.post('/:postId/comments', accessTokenGuard, commentValidator(), async 
     const commentatorId = req.userId
 
     const resultId = await PostService.createCommentForPost(postId, content, commentatorId, content)
-
+    console.log(4, resultId, 'resultId')
     if (!resultId) {
 
         return res.sendStatus(404)

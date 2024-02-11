@@ -50,12 +50,13 @@ export class PostService {
                 const commentData: CommentInputType = {
                     content: content,
                     commentatorInfo: {
-                        ...commentator
+                        userLogin: commentator.userLogin,
+                        userId: commentator.userId
                     },
                     createdAt: (new Date()).toISOString(),
                     postId: postId
                 }
-
+                console.log(1)
                 return await CommentRepository.createComment(commentData)
             } else {
                 return null
