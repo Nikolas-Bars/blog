@@ -13,8 +13,6 @@ export class AuthService {
         try {
             const result = await UserRepository.getUserById(new ObjectId(userId))
 
-            console.log(result)
-
             return result
         } catch (e) {
 

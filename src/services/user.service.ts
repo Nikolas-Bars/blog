@@ -31,9 +31,9 @@ export class UserService {
         }
     }
     static async doesExistsById(id: string): Promise<boolean> {
-        console.log(123)
+
         const user = await UserRepository.getUserById(new ObjectId(id))
-        console.log('joap', 123)
+
         return !!user
     }
     static async _generateHash(password: string, salt: string) {

@@ -22,6 +22,7 @@ import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {CommentsService} from "../services/comments.service";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {commentValidator} from "../validators/comment-validator";
+import {CommentsQueryRepository, QueryPostDataType} from "../repositories/comments-query-repository";
 
 export const postRoute = express.Router()
 
@@ -113,5 +114,24 @@ postRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType
     const result: boolean = await PostService.deletePost(req.params.id)
 
     result ? res.sendStatus(204) : res.sendStatus(404)
+
+})
+
+postRoute.get('/:postId/comments', accessTokenGuard, async (req: Request, res: Response) => {
+
+    const postId = req.params.postId
+
+    const queryData = {
+        pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
+        pageSize: req.query.pageSize ? +req.query.pageSize : 10,
+        sortBy: req.query.sortBy ?? 'createdAt',
+        sortDirection: req.query.sortDirection ? req.query.sortDirection : 'desc'
+    } as QueryPostDataType
+
+    const comments: PaginationType<CommentOutputType> | null = await CommentsQueryRepository.getCommentsForPostById(queryData, postId)
+
+
+
+    comments ? res.send(comments) : res.sendStatus(404)
 
 })

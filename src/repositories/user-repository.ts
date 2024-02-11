@@ -37,11 +37,10 @@ export class UserRepository {
 
     static async getUserById(id: ObjectId): Promise<OutputUser | null> {
         try {
-            console.log(id, 'for result')
             const result = await usersCollection.findOne({ _id: id })
 
             let user;
-            console.log(result, '123result')
+
             if (result) {
                 user = {
                     createdAt: result.createdAt,
@@ -52,7 +51,7 @@ export class UserRepository {
             } else {
                 return null
             }
-            console.log(user, '1234user')
+
             return user
 
         } catch (e) {

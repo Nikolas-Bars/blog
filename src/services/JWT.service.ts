@@ -7,8 +7,6 @@ config()
 export class JWTService {
     static async createToken(userId: string): Promise<string> {
 
-        console.log(process.env.JWT_SECRET, 'process.env.JWT_SECRET')
-
         return jwt.sign({userId: userId}, process.env.JWT_SECRET || '111111111111111111', {expiresIn: '1h'})
 
     }
