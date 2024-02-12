@@ -18,6 +18,22 @@ export class CommentsService {
         }
     }
 
+    static async updateComment(commentId: string, content: string): Promise<boolean> {
+
+        try {
+
+            const result = await CommentRepository.updateComment(commentId, content)
+
+            return !!result
+
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
+    }
+
     static async deleteCommentById(commentId: string, userId: string): Promise<number | null> {
         try {
 

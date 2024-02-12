@@ -22,6 +22,20 @@ export class CommentRepository {
         }
     }
 
+    static async updateComment(id: string, content: string) {
+        try {
+
+            const result = await commentsCollection.updateOne({_id: new ObjectId(id)}, {$set: {content: content}})
+
+            return result.modifiedCount
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+    }
+
     static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
         try {
 
