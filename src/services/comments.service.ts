@@ -18,7 +18,7 @@ export class CommentsService {
         }
     }
 
-    static async deleteCommentById(commentId: string, userId: string): Promise<number> {
+    static async deleteCommentById(commentId: string, userId: string): Promise<number | null> {
         try {
 
             const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId)
@@ -35,7 +35,7 @@ export class CommentsService {
         } catch (e) {
             console.error(e)
 
-            return false
+            return null
         }
     }
 }

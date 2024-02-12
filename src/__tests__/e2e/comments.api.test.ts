@@ -128,4 +128,13 @@ describe('comments', () => {
             createdAt: expect.any(String)
         })
     })
+
+    it ("should be delete comment by id", async () => {
+        const { commentId, token } = expect.getState()
+
+        await request(app)
+            .delete(`/comments/${commentId}`)
+            .set('authorization', `Bearer ${token}`)
+            .expect(204)
+    })
 })
