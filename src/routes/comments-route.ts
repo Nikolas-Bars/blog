@@ -21,6 +21,8 @@ commentsRouter.delete('/:commentId', accessTokenGuard, async (req: Request, res:
 
     const commentId = req.params.commentId
 
+    if (!commentId) return res.sendStatus(404)
+
     const commentatorId = req.userId
 
     const result: number | null = await CommentsService.deleteCommentById(commentId, commentatorId)
