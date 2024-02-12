@@ -2,6 +2,7 @@ import express, { Request, Response} from 'express'
 import {CommentsService} from "../services/comments.service";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {ObjectId} from "mongodb";
+import {commentValidator} from "../validators/comment-validator";
 
 export const commentsRouter = express.Router()
 
@@ -18,7 +19,7 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
     }
 })
 
-commentsRouter.put('/:commentId', accessTokenGuard, async (req: Request, res: Response) => {
+commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (req: Request, res: Response) => {
 
     if(!ObjectId.isValid(req.params.commentId)) {
         res.sendStatus(404)
