@@ -3,6 +3,8 @@ import {CommentsService} from "../services/comments.service";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {ObjectId} from "mongodb";
 import {commentValidator} from "../validators/comment-validator";
+import {CommentRepository} from "../repositories/comment-repository";
+import {CommentOutputType} from "../models/comments/output/comment-output";
 
 export const commentsRouter = express.Router()
 
@@ -24,6 +26,12 @@ commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (r
     if (!req.params) return res.sendStatus(404)
 
     const commentId = req.params.commentId
+
+    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId)
+
+    if (comment && comment.commentatorInfo.userId !== req.userId) {
+        return res.sendStatus(403)
+    }
 
     const content = req.body.content
 

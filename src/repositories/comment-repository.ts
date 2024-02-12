@@ -22,7 +22,7 @@ export class CommentRepository {
         }
     }
 
-    static async updateComment(id: string, content: string) {
+    static async updateComment(id: string, content: string): Promise<number | null> {
         try {
 
             const result = await commentsCollection.updateOne({_id: new ObjectId(id)}, {$set: {content: content}})
