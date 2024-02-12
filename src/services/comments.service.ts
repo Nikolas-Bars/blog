@@ -43,7 +43,13 @@ export class CommentsService {
                 const result = await CommentRepository.deleteOneComment(commentId)
 
                 if (result) return HTTP_RESPONSE_CODES.NO_CONTENT
+
                 else return HTTP_RESPONSE_CODES.NOT_FOUND
+
+            } else if (!comment) {
+
+                return HTTP_RESPONSE_CODES.NOT_FOUND
+
             }
 
             return HTTP_RESPONSE_CODES.FORBIDDEN
