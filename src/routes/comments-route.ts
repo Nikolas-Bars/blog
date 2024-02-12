@@ -21,10 +21,7 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
 
 commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (req: Request, res: Response) => {
 
-    if(!ObjectId.isValid(req.params.commentId)) {
-        res.sendStatus(404)
-        return
-    }
+    if (!req.params) return res.sendStatus(404)
 
     const commentId = req.params.commentId
 
@@ -38,10 +35,7 @@ commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (r
 
 commentsRouter.delete('/:commentId', accessTokenGuard, async (req: Request, res: Response) => {
 
-    if(!ObjectId.isValid(req.params.commentId)) {
-        res.sendStatus(404)
-        return
-    }
+    if (!req.params) return res.sendStatus(404)
 
     const commentId = req.params.commentId
 
