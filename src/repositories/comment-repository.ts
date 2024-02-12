@@ -45,4 +45,17 @@ export class CommentRepository {
         }
     }
 
+    static async deleteOneComment(id: string) {
+        try {
+            const result = await commentsCollection.deleteOne({ _id: new ObjectId(id) })
+
+            if (!result) {
+                return null
+            }
+            return result.deletedCount
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
 }
