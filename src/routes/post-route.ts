@@ -81,7 +81,7 @@ postRoute.post('/:postId/comments', accessTokenGuard, commentValidator(), async 
     const commentatorId = req.userId
 
     const resultId = await PostService.createCommentForPost(postId, content, commentatorId, content)
-    console.log(4, resultId, 'resultId')
+
     if (!resultId) {
 
         return res.sendStatus(404)
@@ -120,6 +120,12 @@ postRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType
 postRoute.get('/:postId/comments', async (req: Request, res: Response) => {
 
     const postId = req.params.postId
+
+    const post = await PostQueryRepository.getPostById(postId)
+
+    if (!post) {
+        return res.sendStatus(404)
+    }
 
     const queryData = {
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
