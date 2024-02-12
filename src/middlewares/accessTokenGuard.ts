@@ -4,7 +4,7 @@ import {UserService} from "../services/user.service";
 
 export const accessTokenGuard = async (req: Request, res: Response, next: NextFunction)=> {
 
-    if (!req.headers.authorization) return 402
+    if (!req.headers || !req.headers.authorization) return res.sendStatus(401)
 
     const token = req.headers.authorization.split(' ')[1]
 
