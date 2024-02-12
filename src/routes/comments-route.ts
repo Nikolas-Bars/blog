@@ -18,7 +18,7 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
     }
 })
 
-commentsRouter.put('/:commentId', async (req: Request, res: Response) => {
+commentsRouter.put('/:commentId', accessTokenGuard, async (req: Request, res: Response) => {
 
     if(!ObjectId.isValid(req.params.commentId)) {
         res.sendStatus(404)
