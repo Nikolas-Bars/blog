@@ -9,7 +9,7 @@ export class EmailManager {
             ' </p>`
 
         const result: string | null = await emailAdapter.sendEmail(email, subject, message)
-
+        console.log(result, 'id sending message')
         return result
     }
 }
