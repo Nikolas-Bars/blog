@@ -15,6 +15,23 @@ export class AuthService {
         return bcrypt.compare(password, passwordHash)
     }
 
+    static async resendConfirmationCode(email: string): Promise<string | null> {
+
+        const user: UserDbType | null = await UserRepository.findUserByEmail(email)
+
+        if (user && user.emailConfirmation) {
+
+            const isConfirmed = user.emailConfirmation.isConfirmed
+
+            if (isConfirmed) return null // если email уже подтвержден
+            // если не подтвержден - отправляем письмо заново
+            return await EmailManager.sendEmailConfirmationMassage(user.email, 'Registration new user', user.emailConfirmation.confirmationCode)
+
+        } else {
+            return null
+        }
+    }
+
     static async getMeData(userId: string) {
         try {
             const result = await UserRepository.getUserById(new ObjectId(userId))
@@ -31,7 +48,7 @@ export class AuthService {
 
     static async registerUser(data: RegistrationDataType) {
 
-        const result = null
+        let result = null
 
         const {login, email, password} = data
         // проверяем существует ли пользователь
@@ -63,12 +80,12 @@ export class AuthService {
         const createdId = await UserRepository.createUser(newUser)
         if (createdId) {
             // отправляем email на почту с кодом подтверждения
-            const result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
+            result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
         }
 
         console.log(result, 'result')
 
-        return createdId ? createdId : null
+        return result ? result : null
 
     }
 

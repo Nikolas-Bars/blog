@@ -8,6 +8,8 @@ export class EmailManager {
             '     <a href=\'https://blog-t57v.onrender.com/confirm-email?code=${code}\'>complete registration</a>\n' +
             ' </p>`
 
-        await emailAdapter.sendEmail(email, subject, message)
+        const result: string | null = await emailAdapter.sendEmail(email, subject, message)
+
+        return result
     }
 }

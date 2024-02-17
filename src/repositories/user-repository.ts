@@ -3,20 +3,6 @@ import {ObjectId, SortDirection, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
 
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
-
-export type QueryPostDataType = {
-    pageNumber: number
-    pageSize: number
-    sortBy: string
-    sortDirection: SortDirection
-}
-
 export class UserRepository {
 
     static async createUser(data: UserDbType): Promise<string | null> {
@@ -60,6 +46,21 @@ export class UserRepository {
 
             return null
 
+        }
+
+    }
+
+    static async findUserByEmail(email: string): Promise<WithId<UserDbType> | null> {
+        try {
+
+            const result = await usersCollection.findOne({email: email})
+
+            return result ? result : null
+
+        } catch (e) {
+            console.error(e)
+
+            return null
         }
 
     }

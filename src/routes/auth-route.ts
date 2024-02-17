@@ -37,6 +37,18 @@ authRoute.post('/registration', registrationValidator(), async (req: Request, re
 
 })
 
+authRoute.post('/registration-email-resending', async (req: Request, res: Response) => {
+
+    const email = req.body.email
+    console.log(email, 'email')
+    const result: string | null = await AuthService.resendConfirmationCode(email)
+    console.log(result, 'result2')
+    if (!result) res.sendStatus(400)
+
+    return res.sendStatus(204)
+
+})
+
 authRoute.get('/me', accessTokenGuard, async (req: Request, res: Response) => {
 
 })
