@@ -56,7 +56,7 @@ export class PostService {
                     createdAt: (new Date()).toISOString(),
                     postId: postId
                 }
-                console.log(1)
+
                 return await CommentRepository.createComment(commentData)
             } else {
                 return null
