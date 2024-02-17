@@ -14,7 +14,7 @@ export class CommentRepository {
                         createdAt: newPost.createdAt,
                         postId: newPost.postId
                     })
-                console.log(2, result.insertedId.toString())
+
                 return result.insertedId.toString()
 
         } catch (e) {

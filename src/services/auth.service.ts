@@ -17,16 +17,24 @@ export class AuthService {
 
     static async resendConfirmationCode(email: string): Promise<string | null> {
 
-        const user: UserDbType | null = await UserRepository.findUserByEmail(email)
+        const user: WithId<UserDbType> | null = await UserRepository.findUserByEmail(email)
 
         if (user && user.emailConfirmation) {
+
+            console.log(user.emailConfirmation.confirmationCode, 'old code')
+
+            const newCode = v1()
+
+            await UserRepository.updateConfirmationCode(user._id.toString(), newCode)
+
+            console.log(newCode, 'newCode')
 
             const isConfirmed = user.emailConfirmation.isConfirmed
 
             if (isConfirmed) return null // если email уже подтвержден
             // если не подтвержден - отправляем письмо заново
-            console.log(isConfirmed, 'isConfirmed', user)
-            return await EmailManager.sendEmailConfirmationMassage(user.email, 'Registration new user', user.emailConfirmation.confirmationCode)
+
+            return await EmailManager.sendEmailConfirmationMassage(user.email, 'Resending code', user.emailConfirmation.confirmationCode)
 
         } else {
             return null
@@ -83,8 +91,6 @@ export class AuthService {
             // отправляем email на почту с кодом подтверждения
             result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
         }
-
-        console.log(result, 'result')
 
         return result ? result : null
 

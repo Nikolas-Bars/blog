@@ -6,7 +6,7 @@ const loginValidator = body('login')
     .isString().withMessage('login must be string type').trim().isLength({min: 3, max: 10}).withMessage('incorrect length of login')
     .custom(async (login) => {
         const user = await usersCollection.findOne({login: login})
-        console.log(user, 'useruseruseruser')
+
         if (!user) {
             return true;
 
@@ -23,7 +23,7 @@ const emailValidator = body('email')
     .notEmpty().isEmail().withMessage('incorrect email value')
     .custom(async (email) => {
         const user = await usersCollection.findOne({ email: email })
-        console.log(user, 'useruseruseruser2')
+
         if (!user) {
             return true;
 

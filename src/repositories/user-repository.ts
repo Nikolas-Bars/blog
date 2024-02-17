@@ -21,6 +21,20 @@ export class UserRepository {
         }
     }
 
+    static async updateConfirmationCode(id: string, code: string) {
+        try {
+
+            const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code}})
+
+            return result.modifiedCount ? result.modifiedCount : null
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+    }
+
     static async getUserById(id: ObjectId): Promise<OutputUser | null> {
         try {
             const result = await usersCollection.findOne({ _id: id })
