@@ -13,9 +13,8 @@ import {UserQueryRepository} from "../repositories/user-query-repository";
 import {CreateUserInputModel} from "../models/users/input/create.user.input.model";
 import {UserService} from "../services/user.service";
 import {OutputUser} from "../models/users/output/output-user";
-import {userCreateValidator} from "../validators/user-validator";
 import {authMiddleware} from "../middlewares/auth-middleware";
-import {accessTokenGuard} from "../middlewares/accessTokenGuard";
+import {registrationValidator} from "../validators/registration-validator";
 
 export const userRoute = express.Router()
 
@@ -30,7 +29,7 @@ userRoute.get('/', async (req: RequestWithQuery<QueryUserInputModel>, res: Respo
     }
 })
 
-userRoute.post('/', authMiddleware, userCreateValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
+userRoute.post('/', authMiddleware, registrationValidator(), async (req: RequestWithBody<CreateUserInputModel>, res: ResponseType<OutputUser>) => {
 
     const result: OutputUser | null = await UserService.createUser(req.body)
 
