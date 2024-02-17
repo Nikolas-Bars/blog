@@ -34,7 +34,7 @@ export class AuthService {
             if (isConfirmed) return null // если email уже подтвержден
             // если не подтвержден - отправляем письмо заново
 
-            return await EmailManager.sendEmailConfirmationMassage(user.email, 'Resending code', user.emailConfirmation.confirmationCode)
+            return await EmailManager.sendEmailConfirmationMassage(user.email, 'Resending code', newCode)
 
         } else {
             return null
