@@ -33,7 +33,7 @@ authRoute.post('/registration', registrationValidator(), async (req: Request, re
 
     if (result) return res.sendStatus(204)
 
-    return res.sendStatus(400)
+    else return res.sendStatus(400)
 
 })
 
@@ -43,9 +43,10 @@ authRoute.post('/registration-email-resending', async (req: Request, res: Respon
     console.log(email, 'email')
     const result: string | null = await AuthService.resendConfirmationCode(email)
     console.log(result, 'result2')
+
     if (!result) res.sendStatus(400)
 
-    return res.sendStatus(204)
+    else return res.sendStatus(204)
 
 })
 
