@@ -31,6 +31,8 @@ export class AuthService {
 
     static async registerUser(data: RegistrationDataType) {
 
+        const result = null
+
         const {login, email, password} = data
         // проверяем существует ли пользователь
         const user = await UserRepository.findByLoginOrEmail(data.login) as WithId<UserDbType>
@@ -61,9 +63,10 @@ export class AuthService {
         const createdId = await UserRepository.createUser(newUser)
         if (createdId) {
             // отправляем email на почту с кодом подтверждения
-            const result = await EmailManager.sendEmailConfirmationMassage(createdId)
+            const result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user')
         }
 
+        console.log(result, 'result')
 
         return createdId ? createdId : null
 
