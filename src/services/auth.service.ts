@@ -63,7 +63,7 @@ export class AuthService {
         const createdId = await UserRepository.createUser(newUser)
         if (createdId) {
             // отправляем email на почту с кодом подтверждения
-            const result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user')
+            const result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
         }
 
         console.log(result, 'result')
