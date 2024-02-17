@@ -22,7 +22,7 @@ export class UserRepository {
     static async createUser(data: UserDbType): Promise<string | null> {
         try {
 
-            const result = await usersCollection.insertOne({ login: data.login, email: data.email, createdAt: data.createdAt, password: data.password, salt: data.salt })
+            const result = await usersCollection.insertOne(data)
 
             return result.insertedId ? result.insertedId.toString() : null
 

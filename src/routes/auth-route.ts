@@ -1,9 +1,10 @@
 import express, {Response, Request} from 'express'
 import {RequestWithBody} from "../models/common";
-import {InputAuthModel} from "../models/auth/input/input-auth-model";
+import {InputAuthModel, RegistrationDataType} from "../models/auth/input/input-auth-model";
 import {AuthService} from "../services/auth.service";
 import {authValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
+import {registrationValidator} from "../validators/registration-validator";
 
 export const authRoute = express.Router()
 
@@ -18,6 +19,21 @@ authRoute.post('/login', authValidator(), async (req: RequestWithBody<InputAuthM
     }
 
     return res.status(200).json(tokenObject)
+
+})
+
+authRoute.post('/registration', registrationValidator(), async (req: Request, res: Response) => {
+    const data: RegistrationDataType = {
+        login: req.body.login,
+        password: req.body.password,
+        email: req.body.email
+    }
+
+    const result = await AuthService.registerUser(data)
+
+    if (result) return res.sendStatus(204)
+
+    return res.sendStatus(400)
 
 })
 
