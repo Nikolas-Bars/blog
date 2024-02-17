@@ -1,9 +1,12 @@
 import {emailAdapter} from "../adapter/email-adapter";
 
 export class EmailManager {
-    static async sendEmailConfirmationMassage(email: string, subject: string) {
+    static async sendEmailConfirmationMassage(email: string, subject: string, code: string) {
 
-        const message = '<div><a>Здоров бро! Для завершения регистрации клацай сюды. А хочешь быть атишнегом - бегом в it-incubator!</a></div>'
+        const message = ` <h1>Thank for your registration</h1>\n' +
+            ' <p>To finish registration please follow the link below:\n' +
+            '     <a href=\'https://blog-t57v.onrender.com/confirm-email?code=${code}\'>complete registration</a>\n' +
+            ' </p>`
 
         await emailAdapter.sendEmail(email, subject, message)
     }
