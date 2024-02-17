@@ -25,6 +25,7 @@ export class AuthService {
 
             if (isConfirmed) return null // если email уже подтвержден
             // если не подтвержден - отправляем письмо заново
+            console.log(isConfirmed, 'isConfirmed', user)
             return await EmailManager.sendEmailConfirmationMassage(user.email, 'Registration new user', user.emailConfirmation.confirmationCode)
 
         } else {
