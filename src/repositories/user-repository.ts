@@ -3,6 +3,12 @@ import {ObjectId, SortDirection, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
 
+export type MeDataType = {
+    email: string
+    login: string
+    userId: string
+}
+
 export class UserRepository {
 
     static async createUser(data: UserDbType): Promise<string | null> {
@@ -62,6 +68,30 @@ export class UserRepository {
 
             return null
         }
+    }
+
+    static async meData(userId: string): Promise<MeDataType | null> {
+
+        try {
+            const result = await usersCollection.findOne({ _id: new ObjectId(userId) })
+
+            if(!result) return null
+
+            return {
+                email: result.email,
+                login: result.login,
+                userId: userId
+            }
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+
+
     }
 
     static async getUserById(id: ObjectId): Promise<OutputUser | null> {

@@ -67,9 +67,9 @@ export class AuthService {
 
     static async getMeData(userId: string) {
         try {
-            const result = await UserRepository.getUserById(new ObjectId(userId))
 
-            return result
+            return await UserRepository.meData(userId)
+
         } catch (e) {
 
             console.error(e)
