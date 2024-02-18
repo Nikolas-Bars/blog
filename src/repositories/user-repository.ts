@@ -21,10 +21,39 @@ export class UserRepository {
         }
     }
 
-    static async updateConfirmationCode(id: string, code: string) {
+    static async confirmEmail(id: string): Promise<boolean> {
+        try {
+            console.log(123)
+            const result = await usersCollection.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
+            console.log(1234, result.modifiedCount)
+            return !!result.modifiedCount
+
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
+    }
+
+    static async getUserByConfirmCode(code: string): Promise<WithId<UserDbType> | null> {
         try {
 
-            const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code}})
+            return await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+    }
+
+    static async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
+        try {
+
+            const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
 
             return result.modifiedCount ? result.modifiedCount : null
 
