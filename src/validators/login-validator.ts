@@ -16,6 +16,8 @@ const codeValidator = body('code').isString().withMessage('incorrect code').cust
 
         throw new Error('code expired')
 
+    } else if (!user) {
+        throw new Error('code does not exist')
     }
 })
 
@@ -26,6 +28,8 @@ const emailValidator = body('email').isEmail().withMessage('incorrect email').cu
 
         throw new Error('email already been applied')
 
+    } if (!user) {
+        throw new Error('user not found')
     }
 })
 
