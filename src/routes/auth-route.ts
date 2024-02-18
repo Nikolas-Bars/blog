@@ -2,7 +2,7 @@ import express, {Response, Request} from 'express'
 import {RequestWithBody} from "../models/common";
 import {InputAuthModel, RegistrationDataType} from "../models/auth/input/input-auth-model";
 import {AuthService} from "../services/auth.service";
-import {authValidator} from "../validators/login-validator";
+import {authValidator, confirmationValidator, resendingValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {registrationValidator} from "../validators/registration-validator";
 
@@ -37,26 +37,25 @@ authRoute.post('/registration', registrationValidator(), async (req: Request, re
 
 })
 
-authRoute.post('/registration-email-resending', async (req: Request, res: Response) => {
-
-    const email = req.body.email
-
-    const result: string | null = await AuthService.resendConfirmationCode(email)
-
-    if (!result) res.sendStatus(400)
-
-    else return res.sendStatus(204)
-
-})
-
-
-authRoute.post('/registration-confirmation', async (req: Request, res: Response) => {
+authRoute.post('/registration-confirmation', confirmationValidator(), async (req: Request, res: Response) => {
 
     const code = req.body.code
 
     const result = await AuthService.confirmEmail(code)
 
     if (!result) return res.sendStatus(400)
+
+    else return res.sendStatus(204)
+
+})
+
+authRoute.post('/registration-email-resending', resendingValidator(), async (req: Request, res: Response) => {
+
+    const email = req.body.email
+
+    const result: string | null = await AuthService.resendConfirmationCode(email)
+
+    if (!result) res.sendStatus(400)
 
     else return res.sendStatus(204)
 
