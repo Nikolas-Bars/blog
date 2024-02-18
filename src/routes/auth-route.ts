@@ -49,6 +49,19 @@ authRoute.post('/registration-email-resending', async (req: Request, res: Respon
 
 })
 
+
+authRoute.post('/registration-confirmation', async (req: Request, res: Response) => {
+
+    const code = req.body.code
+
+    const result = await AuthService.confirmEmail(code)
+
+    if (!result) return res.sendStatus(400)
+
+    else return res.sendStatus(204)
+
+})
+
 authRoute.get('/me', accessTokenGuard, async (req: Request, res: Response) => {
 
 })

@@ -15,19 +15,43 @@ export class AuthService {
         return bcrypt.compare(password, passwordHash)
     }
 
+    static async confirmEmail(code: string) {
+        try {
+
+            const user = await UserRepository.getUserByConfirmCode(code)
+            console.log(user, 'userepta')
+            if (user && user.emailConfirmation && user.emailConfirmation.expirationDate > new Date() && !user.emailConfirmation.isConfirmed) {
+
+                const result = await UserRepository.confirmEmail(user._id.toString())
+
+                return result ? result : null
+
+            } else {
+                return null
+            }
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+
+    }
+
     static async resendConfirmationCode(email: string): Promise<string | null> {
 
         const user: WithId<UserDbType> | null = await UserRepository.findUserByEmail(email)
 
         if (user && user.emailConfirmation) {
 
-            console.log(user.emailConfirmation.confirmationCode, 'old code')
-
             const newCode = v1()
 
-            await UserRepository.updateConfirmationCode(user._id.toString(), newCode)
+            const newExpirationDate = add.add(new Date(), {
+                hours: 1,
+                minutes: 30
+            })
 
-            console.log(newCode, 'newCode')
+            await UserRepository.updateConfirmationCode(user._id.toString(), newCode, newExpirationDate)
 
             const isConfirmed = user.emailConfirmation.isConfirmed
 
@@ -99,8 +123,8 @@ export class AuthService {
     static async checkCredentials(loginOrEmail: string, password: string): Promise<string | false> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
-
-            if (!user) {
+            // если пользователь не найден или у него нет подтверждения почты
+            if (!user || (user.emailConfirmation && !user.emailConfirmation.isConfirmed)) {
                 return false
             }
 
