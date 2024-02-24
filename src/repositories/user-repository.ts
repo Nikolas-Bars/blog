@@ -56,6 +56,22 @@ export class UserRepository {
         }
     }
 
+    static async updateRefreshToken(userId: string, refreshToken: string) {
+        try {
+
+            const result = await usersCollection.updateOne({_id: new ObjectId(userId)}, {$set: {refreshToken: refreshToken}})
+
+            return !!result.modifiedCount
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+    }
+
     static async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
         try {
 
