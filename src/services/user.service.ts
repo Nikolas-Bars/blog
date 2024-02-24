@@ -33,13 +33,29 @@ export class UserService {
 
     static async updateUsersRefreshToken(userId: string, refreshToken: string) {
         try {
+
             return await UserRepository.updateRefreshToken(userId, refreshToken)
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+
+    }
+
+    static async deleteRefreshTokenByUserId(userId: string) {
+        try {
+
+            return await UserRepository.deleteRefreshToken(userId)
+
         } catch (e) {
             console.error(e)
 
             return null
         }
-
     }
 
     static async doesExistsById(id: string): Promise<boolean> {

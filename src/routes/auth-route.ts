@@ -7,6 +7,7 @@ import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {registrationValidator} from "../validators/registration-validator";
 import {JWTService} from "../services/JWT.service";
 import {refreshTokenMiddleware} from "../middlewares/refreshTokenMiddleware";
+import {UserService} from "../services/user.service";
 
 export const authRoute = express.Router()
 
@@ -39,6 +40,18 @@ authRoute.post('/refresh-token', refreshTokenMiddleware, async (req: Request, re
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
 
     return res.status(200).json(tokenObject)
+
+})
+
+authRoute.post('/logout', refreshTokenMiddleware, async (req: Request, res: Response) => {
+
+    const clear = await UserService.deleteRefreshTokenByUserId(req.userId)
+
+    res.clearCookie('refreshToken');
+
+    if (!clear) return res.sendStatus(401)
+
+    return res.sendStatus(204)
 
 })
 
