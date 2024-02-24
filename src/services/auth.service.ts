@@ -149,6 +149,25 @@ export class AuthService {
 
     }
 
+    static async updateTokens(user_id: string): Promise<{ accessToken:string, refreshToken: string } | null> {
+
+        try {
+            const accessToken = await JWTService.createToken(user_id)
+
+            const refreshToken = await JWTService.createRefreshToken(user_id)
+
+            return { accessToken , refreshToken }
+
+        }  catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+
+    }
+
     static async checkAccessToken(token: string, refreshToken: string) {
         try {
 

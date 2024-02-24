@@ -30,6 +30,18 @@ export class UserService {
             return null
         }
     }
+
+    static async updateUsersRefreshToken(userId: string, refreshToken: string) {
+        try {
+            return await UserRepository.updateRefreshToken(userId, refreshToken)
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+
+    }
+
     static async doesExistsById(id: string): Promise<boolean> {
 
         const user = await UserRepository.getUserById(new ObjectId(id))
