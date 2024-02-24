@@ -86,7 +86,6 @@ export class AuthService {
         const {login, email, password} = data
         // проверяем существует ли пользователь
         const user = await UserRepository.findByLoginOrEmail(data.login) as WithId<UserDbType>
-
         if (user) return null
         // создаем хэш пароля
         const salt = await bcrypt.genSalt(10)
