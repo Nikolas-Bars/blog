@@ -5,18 +5,21 @@ import {AuthService} from "../services/auth.service";
 import {authValidator, confirmationValidator, resendingValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {registrationValidator} from "../validators/registration-validator";
+import {JWTService} from "../services/JWT.service";
 
 export const authRoute = express.Router()
 
 authRoute.post('/login', authValidator(), async (req: RequestWithBody<InputAuthModel>, res: Response) => {
 
-    const token: string | false = await AuthService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const tokens: { accessToken:string, refreshToken: string } | false = await AuthService.checkCredentials(req.body.loginOrEmail, req.body.password)
 
-    if (!token) return res.sendStatus(401)
+    if (!tokens) return res.sendStatus(401)
 
     const tokenObject = {
-        accessToken: token
+        accessToken: tokens.accessToken
     }
+
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
 
     return res.status(200).json(tokenObject)
 

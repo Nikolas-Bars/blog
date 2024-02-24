@@ -5,10 +5,13 @@ import {deleteAllDataRoute} from "./routes/test-delete-route";
 import {userRoute} from "./routes/users-route";
 import {authRoute} from "./routes/auth-route";
 import {commentsRouter} from "./routes/comments-route";
+import cookieParser from "cookie-parser";
 
 export const app = express()
 
 app.use(express.json())
+
+app.use(cookieParser())
 
 app.get('/', (req, res) => {
     res.json('Hello friends!!!')

@@ -120,7 +120,7 @@ export class AuthService {
 
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<string | false> {
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<{ accessToken:string, refreshToken: string } | false> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
             // если пользователь не найден или у него нет подтверждения почты
@@ -132,7 +132,11 @@ export class AuthService {
 
             if (!isPasswordCorrect) return false
 
-            return await JWTService.createToken(user._id.toString())
+            const accessToken = await JWTService.createToken(user._id.toString())
+
+            const refreshToken = await JWTService.createRefreshToken(user._id.toString())
+
+            return { accessToken , refreshToken }
 
         } catch (e) {
 
@@ -143,5 +147,29 @@ export class AuthService {
         }
 
 
+    }
+
+    static async checkAccessToken(token: string, refreshToken: string) {
+        try {
+
+            const accessPayload = await JWTService.verifyToken(token)
+
+            const refreshPayload = await JWTService.verifyToken(refreshToken)
+
+            if (!accessPayload) return null
+
+            if (Date.now() > accessPayload.exp * 1000 && Date.now() <= refreshPayload.exp * 1000) {
+
+            } else if (Date.now() < accessPayload.exp) {
+                return accessPayload
+            }
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
     }
 }
