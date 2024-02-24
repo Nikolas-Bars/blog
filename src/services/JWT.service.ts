@@ -7,11 +7,15 @@ config()
 export class JWTService {
     static async createToken(userId: string): Promise<string> {
 
-        return jwt.sign({userId: userId}, process.env.JWT_SECRET || '111111111111111111', {expiresIn: '1h'})
+        return jwt.sign({userId: userId}, process.env.JWT_SECRET || '111111111111111111', {expiresIn: '10s'})
 
     }
+    static async createRefreshToken(userId: string): Promise<string> {
 
-    static async decodeToken(token: string) {
+        return jwt.sign({userId: userId}, process.env.JWT_REFRESH_SECRET || '222222222222222222', {expiresIn: '20s'})
+
+    }
+    static async decodeToken(token: string): Promise<JwtPayload | string | null> {
 
         try {
 
@@ -30,7 +34,7 @@ export class JWTService {
 
             const result: any = jwt.verify(token, process.env.JWT_SECRET || '111111111111111111')
             
-            return new ObjectId(result.userId)
+            return result
 
         } catch(e) {
 

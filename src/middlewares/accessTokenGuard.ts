@@ -12,7 +12,7 @@ export const accessTokenGuard = async (req: Request, res: Response, next: NextFu
 
     if (payload) {
 
-       const userId = payload.toString()
+        const userId = payload.userId.toString()
 
         const user: boolean = await UserService.doesExistsById(userId)
 
