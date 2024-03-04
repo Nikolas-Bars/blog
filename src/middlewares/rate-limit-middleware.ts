@@ -1,14 +1,12 @@
-import {NextFunction, Request, Response} from "express";
+import {NextFunction, Response} from "express";
 import {RequestWithBody} from "../models/common";
 import {InputAuthModel} from "../models/auth/input/input-auth-model";
-import {UserService} from "../services/user.service";
 import {UserRepository} from "../repositories/user-repository";
 import {LimitService} from "../services/limit.service";
 
 export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, res: Response, next: NextFunction) => {
 
     const url = req.originalUrl
-
 
     console.log(req.ip, 'ipipipip')
 
