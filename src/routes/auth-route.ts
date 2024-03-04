@@ -15,7 +15,9 @@ authRoute.post('/login', authValidator(), rateLimitMiddleware, async (req: Reque
 
     const ip = req.header('x-forwarded-for') || req.socket.remoteAddress
 
-    const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.login(req.body.loginOrEmail, req.body.password, ip)
+    const deviceName =  req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
+
+    const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.login(req.body.loginOrEmail, req.body.password, deviceName!, ip)
 
     if (!tokens) return res.sendStatus(401)
 

@@ -122,7 +122,7 @@ export class AuthService {
 
     }
 
-    static async login(loginOrEmail: string, password: string, ip?: string): Promise<{ accessToken:string, refreshToken: string } | null> {
+    static async login(loginOrEmail: string, password: string, deviceName: string, ip?: string): Promise<{ accessToken:string, refreshToken: string } | null> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
             // если пользователь не найден или у него нет подтверждения почты
@@ -146,7 +146,9 @@ export class AuthService {
                 userId: user._id.toString(),
                 issueAt: decoded.iat,
                 deviceId,
-                ip
+                ip,
+                title: deviceName,
+                lastActiveDate: new Date().toISOString()
             }
 
             await SessionServices.CreateSession(session)

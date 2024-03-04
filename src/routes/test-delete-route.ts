@@ -3,7 +3,7 @@ import {
     blogsCollection,
     commentsCollection,
     postsCollection,
-    requestHistoryCollection,
+    requestHistoryCollection, securityDevicesSessionCollection,
     usersCollection
 } from "../db/db";
 
@@ -20,6 +20,8 @@ deleteAllDataRoute.delete('/',async (req: Request, res: Response) => {
     // await commentsCollection.deleteMany({})
 
     await requestHistoryCollection.deleteMany({})
+
+    await securityDevicesSessionCollection.deleteMany({})
 
     res.sendStatus(204)
 })

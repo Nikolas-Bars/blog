@@ -15,13 +15,40 @@ export class SecurityDevicesRepository {
     static async CreateSession(session: SecurityDbType) {
         try {
 
+            console.log(session, 'session')
+
+            await securityDevicesSessionCollection.deleteMany({ip: session.ip})
+
             const result = await securityDevicesSessionCollection.insertOne(session)
 
         } catch(e) {
+
             console.error(e)
             return null
+
         }
 
+    }
+
+    static async getSessions(userId: string) {
+        try {
+
+            const result = await securityDevicesSessionCollection.find({userId: userId}).toArray()
+
+            return result.map((el) => {
+                return {
+                    ip: el.ip,
+                    title: el.title,
+                    lastActiveDate: el.lastActiveDate,
+                    deviceId: el.deviceId
+                }
+            })
+
+        } catch(e) {
+
+            return null
+
+        }
     }
 
     static async sessionExists(deviceId:  string, userId: string, iat: string) {
@@ -44,7 +71,12 @@ export class SecurityDevicesRepository {
     static async updateSession(deviceId: string, iat: string) {
         try {
 
-            const result = await securityDevicesSessionCollection.updateOne({deviceId: deviceId}, {$set: {issueAt: iat}})
+            const lastActiveDate = new Date().toISOString()
+
+            const result = await securityDevicesSessionCollection.updateOne({deviceId: deviceId}, {$set: {
+                issueAt: iat, lastActiveDate: lastActiveDate
+
+            }})
 
         } catch (e) {
 

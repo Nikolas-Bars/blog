@@ -16,6 +16,17 @@ export class SessionServices {
         }
     }
 
+    static async getSessions(userId: string) {
+        try {
+
+            return await SecurityDevicesRepository.getSessions(userId)
+
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
+
     static async isSessionExists(deviceId:  string, userId: string, iat: string) {
         try {
 
