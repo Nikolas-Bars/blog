@@ -8,6 +8,9 @@ import {UserService} from "./user.service";
 import {v1} from "uuid";
 import add from "date-fns/add"
 import {EmailManager} from "../manager/email-manager";
+import {SessionServices} from "./session.service";
+import {SecurityDbType} from "../models/securityDevices/securityDbType";
+import {SecurityDevicesRepository} from "../repositories/security-devices-repository";
 
 
 export class AuthService {
@@ -119,41 +122,59 @@ export class AuthService {
 
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<{ accessToken:string, refreshToken: string } | false> {
+    static async login(loginOrEmail: string, password: string, ip?: string): Promise<{ accessToken:string, refreshToken: string } | null> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
             // если пользователь не найден или у него нет подтверждения почты
             if (!user || (user.emailConfirmation && !user.emailConfirmation.isConfirmed)) {
-                return false
+                return null
             }
 
             const isPasswordCorrect = await this._checkPassword(password, user.password)
 
-            if (!isPasswordCorrect) return false
+            if (!isPasswordCorrect) return null
+
+            const deviceId = v1()
 
             const accessToken = await JWTService.createToken(user._id.toString())
 
-            const refreshToken = await JWTService.createRefreshToken(user._id.toString())
+            const refreshToken = await JWTService.createRefreshToken(user._id.toString(), deviceId)
 
-            return { accessToken , refreshToken }
+            const decoded: any = await JWTService.decodeToken(refreshToken)
+
+            const session: SecurityDbType = {
+                userId: user._id.toString(),
+                issueAt: decoded.iat,
+                deviceId,
+                ip
+            }
+
+            await SessionServices.CreateSession(session)
+
+            return { accessToken, refreshToken }
 
         } catch (e) {
 
             console.error(e)
 
-            return false
+            return null
 
         }
 
 
     }
 
-    static async updateTokens(user_id: string): Promise<{ accessToken:string, refreshToken: string } | null> {
+    static async updateTokens(user_id: string, deviceId: string): Promise<{ accessToken:string, refreshToken: string } | null> {
 
         try {
+
             const accessToken = await JWTService.createToken(user_id)
 
-            const refreshToken = await JWTService.createRefreshToken(user_id)
+            const refreshToken = await JWTService.createRefreshToken(user_id, deviceId)
+
+            const decodedRefresh: any = await JWTService.decodeToken(refreshToken)
+
+            await SecurityDevicesRepository.updateSession(deviceId, decodedRefresh.iat)
 
             return { accessToken , refreshToken }
 

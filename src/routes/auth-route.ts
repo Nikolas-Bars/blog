@@ -5,15 +5,17 @@ import {AuthService} from "../services/auth.service";
 import {authValidator, confirmationValidator, resendingValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {registrationValidator} from "../validators/registration-validator";
-import {JWTService} from "../services/JWT.service";
 import {refreshTokenMiddleware} from "../middlewares/refreshTokenMiddleware";
 import {UserService} from "../services/user.service";
+import {rateLimitMiddleware} from "../middlewares/rate-limit-middleware";
 
 export const authRoute = express.Router()
 
-authRoute.post('/login', authValidator(), async (req: RequestWithBody<InputAuthModel>, res: Response) => {
+authRoute.post('/login', authValidator(), rateLimitMiddleware, async (req: RequestWithBody<InputAuthModel>, res: Response) => {
 
-    const tokens: { accessToken:string, refreshToken: string } | false = await AuthService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const ip = req.header('x-forwarded-for') || req.socket.remoteAddress
+
+    const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.login(req.body.loginOrEmail, req.body.password, ip)
 
     if (!tokens) return res.sendStatus(401)
 
@@ -29,7 +31,7 @@ authRoute.post('/login', authValidator(), async (req: RequestWithBody<InputAuthM
 
 authRoute.post('/refresh-token', refreshTokenMiddleware, async (req: Request, res: Response) => {
 
-    const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.updateTokens(req.userId)
+    const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.updateTokens(req.userId, req.deviceId)
 
     if (!tokens) return res.sendStatus(401)
 

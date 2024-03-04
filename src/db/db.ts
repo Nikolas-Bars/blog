@@ -4,6 +4,8 @@ import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDbType} from "../models/posts/db/post-db";
 import {UserDbType} from "../models/users/db/user-db";
 import {CommentInputType} from "../models/comments/input/comment-input";
+import {SecurityDbType} from "../models/securityDevices/securityDbType";
+import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 
 dotenv.config()
 // указываем порт
@@ -26,6 +28,10 @@ export const postsCollection = dataBase.collection<PostDbType>('posts')
 export const usersCollection = dataBase.collection<UserDbType>('users')
 
 export const commentsCollection = dataBase.collection<CommentInputType>('comments')
+
+export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securityDevices')
+
+export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requestHistory')
 
 export const runDb = async () => {
     try {
