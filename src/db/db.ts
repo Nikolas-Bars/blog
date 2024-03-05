@@ -33,6 +33,8 @@ export const securityDevicesSessionCollection = dataBase.collection<SecurityDbTy
 
 export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requestHistory')
 
+export const blackListRefreshCollection = dataBase.collection<any>('blackListRefresh')
+
 export const runDb = async () => {
     try {
         // при запуске функции коннктимся MongoDb

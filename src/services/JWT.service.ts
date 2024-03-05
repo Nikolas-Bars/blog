@@ -13,11 +13,11 @@ export class JWTService {
     }
     static async createRefreshToken(userId: string, deviceId: string): Promise<string> {
 
-        const newToken = jwt.sign({userId: userId, deviceId: deviceId}, process.env.JWT_REFRESH_SECRET || '222222222222222222', {expiresIn: '20h'})
+        return jwt.sign({userId: userId, deviceId: deviceId}, process.env.JWT_REFRESH_SECRET || '222222222222222222', {expiresIn: '20h'})
 
-        await UserService.updateUsersRefreshToken(userId, newToken)
+        // await UserService.updateUsersRefreshToken(userId, newToken)
 
-        return newToken
+        // return newToken
 
     }
     static async decodeToken(token: string): Promise<JwtPayload | string | null> {
