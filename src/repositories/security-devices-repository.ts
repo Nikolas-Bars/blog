@@ -15,8 +15,6 @@ export class SecurityDevicesRepository {
     static async CreateSession(session: SecurityDbType) {
         try {
 
-            console.log(session, 'session')
-
             await securityDevicesSessionCollection.deleteMany({ip: session.ip})
 
             const result = await securityDevicesSessionCollection.insertOne(session)

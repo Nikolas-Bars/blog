@@ -10,11 +10,15 @@ export const accessTokenGuard = async (req: Request, res: Response, next: NextFu
 
     const payload: any = await JWTService.verifyToken(token)
 
+    console.log(payload, 'payload1')
+
     if (payload) {
 
         const userId = payload.userId.toString()
 
         const user: boolean = await UserService.doesExistsById(userId)
+
+        console.log(user, 'payload2')
 
         if (!user) return res.sendStatus(401)
 
