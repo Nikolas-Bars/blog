@@ -6,12 +6,25 @@ export class SessionServices {
     static async CreateSession(session: SecurityDbType) {
         try {
 
-            await SecurityDevicesRepository.CreateSession(session)
+            return await SecurityDevicesRepository.CreateSession(session)
 
         } catch(e) {
 
             console.error(e)
             return null
+
+        }
+    }
+
+    static async deleteAllSessions(userId: string): Promise<boolean> {
+        try {
+
+            return await SecurityDevicesRepository.deleteAllSessions(userId)
+
+        } catch (e) {
+
+            console.error(e)
+            return false
 
         }
     }

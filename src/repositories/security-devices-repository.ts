@@ -15,9 +15,11 @@ export class SecurityDevicesRepository {
     static async CreateSession(session: SecurityDbType) {
         try {
 
-            await securityDevicesSessionCollection.deleteMany({ip: session.ip})
+            console.log(session.ip, 'session.ip')
 
-            const result = await securityDevicesSessionCollection.insertOne(session)
+            //await securityDevicesSessionCollection.deleteMany({ip: session.ip})
+
+            return await securityDevicesSessionCollection.insertOne(session)
 
         } catch(e) {
 
@@ -26,6 +28,21 @@ export class SecurityDevicesRepository {
 
         }
 
+    }
+
+    static async deleteAllSessions(userId: string): Promise<boolean> {
+        try {
+
+            await securityDevicesSessionCollection.deleteMany({userId: userId})
+
+            return true
+
+        } catch(e) {
+
+            console.error(e)
+            return false
+
+        }
     }
 
     static async getSessions(userId: string) {
