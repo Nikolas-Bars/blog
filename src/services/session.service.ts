@@ -29,6 +29,32 @@ export class SessionServices {
         }
     }
 
+    static async deleteOneSessions(deviceId: string): Promise<boolean> {
+        try {
+
+            return await SecurityDevicesRepository.deleteOneSessions(deviceId)
+
+        } catch (e) {
+
+            console.error(e)
+            return false
+
+        }
+    }
+
+    static async getSessionByDeviceId(deviceId: string): Promise<SecurityDbType | null> {
+        try {
+
+            return await SecurityDevicesRepository.getSessionByDeviceId(deviceId)
+
+        } catch (e) {
+
+            console.error(e)
+            return null
+
+        }
+    }
+
     static async getSessions(userId: string) {
         try {
 
