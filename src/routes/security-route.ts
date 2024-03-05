@@ -11,3 +11,10 @@ securityRoute.get('/devices', accessTokenGuard, async (req: Request, res: Respon
     return res.status(200).json(result)
 
 })
+
+securityRoute.delete('/devices', accessTokenGuard, async (req: Request, res: Response) => {
+
+    const result = await SessionServices.deleteAllSessions(req.userId)
+
+    return result ? res.sendStatus(204) : res.status(400)
+})
