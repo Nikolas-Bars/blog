@@ -10,9 +10,11 @@ export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, 
 
     const ip = req.header('x-forwarded-for') || req.socket.remoteAddress || '127.001'
 
-    const user = await UserRepository.findByLoginOrEmail(req.body.loginOrEmail)
+    // const user = await UserRepository.findByLoginOrEmail(req.body.loginOrEmail)
+    //
+    // console.log(user, 'usesasasas')
 
-    if(!user) return res.sendStatus(401)
+    // if(!user) return res.sendStatus(401)
 
     const currentDate = new Date();
 
@@ -20,7 +22,7 @@ export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, 
 
     const dateForCompare = currentDate.getTime() + 10000
 
-    const currentCountRequests = await LimitService.checkAndCreate({date: date.toString(), userId: user._id.toString(), url, ip: ip}, dateForCompare)
+    const currentCountRequests = await LimitService.checkAndCreate({date: date.toString(), userId: req.userId || '11', url, ip: ip}, dateForCompare)
 
     if (currentCountRequests === null) return res.sendStatus(429)
 
