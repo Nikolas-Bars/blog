@@ -31,7 +31,7 @@ authRoute.post('/login', authValidator(), rateLimitMiddleware, async (req: Reque
 
 })
 
-authRoute.post('/refresh-token', refreshTokenMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/refresh-token', refreshTokenMiddleware, rateLimitMiddleware, async (req: Request, res: Response) => {
 
     const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.updateTokens(req.userId, req.deviceId)
 
@@ -59,7 +59,7 @@ authRoute.post('/logout', refreshTokenMiddleware, async (req: Request, res: Resp
 
 })
 
-authRoute.post('/registration', registrationValidator(), async (req: Request, res: Response) => {
+authRoute.post('/registration', registrationValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
     const data: RegistrationDataType = {
         login: req.body.login,
         password: req.body.password,
@@ -74,7 +74,7 @@ authRoute.post('/registration', registrationValidator(), async (req: Request, re
 
 })
 
-authRoute.post('/registration-confirmation', confirmationValidator(), async (req: Request, res: Response) => {
+authRoute.post('/registration-confirmation', confirmationValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
 
     const code = req.body.code
 
@@ -86,7 +86,7 @@ authRoute.post('/registration-confirmation', confirmationValidator(), async (req
 
 })
 
-authRoute.post('/registration-email-resending', resendingValidator(), async (req: Request, res: Response) => {
+authRoute.post('/registration-email-resending', resendingValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
 
     const email = req.body.email
 

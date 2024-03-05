@@ -15,8 +15,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     const black = await blackListRefreshCollection.findOne({token: refreshToken})
 
-    console.log(payload, black, 'payload, black')
-
     if (payload && !black) {
 
         const deviceId = payload.deviceId
@@ -27,13 +25,9 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
         const session = await SessionServices.isSessionExists(deviceId, userId, payload.iat, deviceName!)
 
-        console.log(deviceId, userId, payload.iat, deviceName, 'session')
-
         if (!session) return res.sendStatus(401)
 
         const user = await usersCollection.findOne({_id: new ObjectId(userId)})
-
-        console.log(user, 'userId')
 
         if (!user) return res.sendStatus(401)
 
