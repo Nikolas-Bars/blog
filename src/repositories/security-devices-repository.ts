@@ -51,10 +51,10 @@ export class SecurityDevicesRepository {
         }
     }
 
-    static async sessionExists(deviceId:  string, userId: string, iat: string) {
+    static async sessionExists(deviceId:  string, userId: string, iat: string, deviceName: string) {
         try {
 
-            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId, issueAt: iat, userId: userId })
+            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId, issueAt: iat, userId: userId, deviceName: deviceName })
 
             if (!result) return null
 

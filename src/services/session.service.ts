@@ -27,10 +27,10 @@ export class SessionServices {
         }
     }
 
-    static async isSessionExists(deviceId:  string, userId: string, iat: string) {
+    static async isSessionExists(deviceId:  string, userId: string, iat: string, deviceName: string) {
         try {
 
-            const  result = await SecurityDevicesRepository.sessionExists(deviceId, userId, iat)
+            const  result = await SecurityDevicesRepository.sessionExists(deviceId, userId, iat, deviceName)
 
             if (!result) return null
 
