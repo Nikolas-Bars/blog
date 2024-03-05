@@ -38,8 +38,6 @@ export class LimitRepository {
 
             const result = await requestHistoryCollection.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
 
-            console.log(result, 'datadatadata')
-
             return result
 
         } catch (e) {

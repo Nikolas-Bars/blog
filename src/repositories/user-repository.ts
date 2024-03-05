@@ -29,9 +29,9 @@ export class UserRepository {
 
     static async confirmEmail(id: string): Promise<boolean> {
         try {
-            console.log(123)
+
             const result = await usersCollection.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
-            console.log(1234, result.modifiedCount)
+
             return !!result.modifiedCount
 
         } catch (e) {
