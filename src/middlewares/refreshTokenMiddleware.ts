@@ -19,7 +19,9 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
         const userId = payload.userId.toString()
 
-        const session = await SessionServices.isSessionExists(deviceId, userId, payload.iat)
+        const deviceName =  req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
+
+        const session = await SessionServices.isSessionExists(deviceId, userId, payload.iat, deviceName)
 
         if (!session) return res.sendStatus(401)
 
