@@ -174,8 +174,6 @@ export class AuthService {
 
             const refreshToken = await JWTService.createRefreshToken(user_id, deviceId)
 
-            console.log(refreshToken, 'sukA  NEW')
-
             const decodedRefresh: any = await JWTService.decodeToken(refreshToken)
 
             await SecurityDevicesRepository.updateSession(deviceId, decodedRefresh.iat)

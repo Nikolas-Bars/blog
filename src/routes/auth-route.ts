@@ -41,8 +41,6 @@ authRoute.post('/refresh-token', refreshTokenMiddleware, rateLimitMiddleware, as
         accessToken: tokens.accessToken
     }
 
-    console.log(tokens.refreshToken, 'NEW')
-
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
 
     return res.status(200).json(tokenObject)
