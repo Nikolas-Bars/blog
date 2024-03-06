@@ -28,10 +28,12 @@ export class SecurityDevicesRepository {
 
     }
 
-    static async deleteAllSessions(userId: string): Promise<boolean> {
+    static async deleteAllSessions(userId: string, deviceId: string): Promise<boolean> {
         try {
 
-            await securityDevicesSessionCollection.deleteMany({userId: userId})
+            const filter = { userId: userId, deviceId: { $ne: deviceId } };
+
+            await securityDevicesSessionCollection.deleteMany(filter);
 
             return true
 
@@ -79,10 +81,10 @@ export class SecurityDevicesRepository {
         }
     }
 
-    static async sessionExists(deviceId:  string, userId: string, iat: string, deviceName: string) {
+    static async sessionExists(deviceId:  string, userId: string) {
         try {
 
-            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId, issueAt: iat, userId: userId, title: deviceName })
+            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId, userId: userId })
 
             if (!result) return null
 

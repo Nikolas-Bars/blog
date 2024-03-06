@@ -13,9 +13,9 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     // проверяем что он еще действует
     const payload: any = await JWTService.verifyRefreshToken(refreshToken)
 
-    const black = await blackListRefreshCollection.findOne({token: refreshToken})
-    console.log(payload, black, 'payload, black')
-    if (payload && !black) {
+    // const black = await blackListRefreshCollection.findOne({token: refreshToken})
+    console.log(payload, 'payload, black')
+    if (payload) {
 
         const deviceId = payload.deviceId
 
@@ -23,11 +23,12 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
         const deviceName = req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
 
+        console.log(deviceId, userId, payload.iat, deviceName, 'deviceId, userId, payload.iat, deviceName')
 
         // ТЕСТ
-        // const session = await SessionServices.isSessionExists(deviceId, userId, payload.iat, deviceName!)
-        //
-        // if (!session) return res.sendStatus(401)
+        const session = await SessionServices.isSessionExists(deviceId, userId)
+
+        if (!session || session.issueAt !== payload.iat) return res.sendStatus(401)
 
 
         /////////////
@@ -40,7 +41,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             req.deviceId = deviceId
         }
 
-        await blackListRefreshCollection.insertOne({token: refreshToken})
+        // await blackListRefreshCollection.insertOne({token: refreshToken})
 
         return next()
     }

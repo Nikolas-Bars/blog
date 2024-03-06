@@ -14,7 +14,7 @@ securityRoute.get('/devices', refreshTokenGuard, async (req: Request, res: Respo
 
 securityRoute.delete('/devices', refreshTokenGuard, async (req: Request, res: Response) => {
 
-    const result = await SessionServices.deleteAllSessions(req.userId)
+    const result = await SessionServices.deleteAllSessions(req.userId, req.deviceId)
 
     return result ? res.sendStatus(204) : res.status(400)
 })

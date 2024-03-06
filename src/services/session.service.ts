@@ -16,10 +16,10 @@ export class SessionServices {
         }
     }
 
-    static async deleteAllSessions(userId: string): Promise<boolean> {
+    static async deleteAllSessions(userId: string, deviceId: string): Promise<boolean> {
         try {
 
-            return await SecurityDevicesRepository.deleteAllSessions(userId)
+            return await SecurityDevicesRepository.deleteAllSessions(userId, deviceId)
 
         } catch (e) {
 
@@ -66,10 +66,10 @@ export class SessionServices {
         }
     }
 
-    static async isSessionExists(deviceId:  string, userId: string, iat: string, deviceName: string) {
+    static async isSessionExists(deviceId:  string, userId: string) {
         try {
 
-            const  result = await SecurityDevicesRepository.sessionExists(deviceId, userId, iat, deviceName)
+            const  result = await SecurityDevicesRepository.sessionExists(deviceId, userId)
 
             if (!result) return null
 
