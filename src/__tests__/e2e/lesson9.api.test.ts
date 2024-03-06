@@ -67,7 +67,7 @@ describe('/users', () => {
             accessToken: expect.any(String)
         })
 
-        const refreshToken2 = session1.headers['set-cookie'][0].split(';')[0].split('=')[1]
+        const refreshToken2 = session2.headers['set-cookie'][0].split(';')[0].split('=')[1]
 
         /////////////////////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ describe('/users', () => {
             accessToken: expect.any(String)
         })
 
-        const refreshToken3 = session1.headers['set-cookie'][0].split(';')[0].split('=')[1]
+        const refreshToken3 = session3.headers['set-cookie'][0].split(';')[0].split('=')[1]
 
         /////////////////////////////////////////////////////////////////
 
@@ -126,6 +126,9 @@ describe('/users', () => {
         expect(get4Section.body).toHaveLength(4);
 
         const session2Data = get4Section.body.find((el: any) => el.title === 'Browser2')
+        const session3Data = get4Section.body.find((el: any) => el.title === 'Browser3')
+        const session1Data = get4Section.body.find((el: any) => el.title === 'Browser1')
+        const session4Data = get4Section.body.find((el: any) => el.title === 'Browser4')
 
         //////////////////////////////////////////////////
 
@@ -143,15 +146,13 @@ describe('/users', () => {
 
         expect(get3Sections.body).toHaveLength(3);
 
-        ////////////////////////////////////////////////////
-
-        const updatedRefreshTokenForFirstUser = refreshResult.headers['set-cookie'][0].split(';')[0].split('=')[1]
+        //////////////////////////////////////////////////// Делаем logout девайсом 3. Запрашиваем список девайсов (девайсом 1).  В списке не должно быть девайса 3;
 
         await request(app)
             .post('/auth/logout')
-            .set('Cookie', `refreshToken=${updatedRefreshTokenForFirstUser}`)
-            .set('User-Agent', `Browser1`)
-            .set('x-forwarded-for', `::111:111`)
+            .set('Cookie', `refreshToken=${refreshToken3}`)
+            .set('User-Agent', `Browser3`)
+            .set('x-forwarded-for', `::111:333`)
             .expect(204)
 
         const get2Sections = await request(app)
@@ -162,6 +163,24 @@ describe('/users', () => {
             .expect(200)
 
        expect(get2Sections.body).toHaveLength(2);
+
+        //////////////////////////////////////////////////////// Удаляем все оставшиеся девайсы (девайсом 1).  Запрашиваем список девайсов. В списке должен содержаться только один (текущий) девайс;
+
+        await request(app)
+            .delete(`/security/devices/${session4Data.deviceId}`)
+            .set('authorization', `Bearer ${token}`)
+            .expect(204)
+
+        const get1Sections = await request(app)
+            .get('/security/devices')
+            .set('authorization', `Bearer ${token}`)
+            .set('User-Agent', `Browser1`)
+            .set('x-forwarded-for', `::111:111`)
+            .expect(200)
+
+        expect(get1Sections.body).toHaveLength(1);
+
+        console.log(get1Sections.body)
 
     })
 
