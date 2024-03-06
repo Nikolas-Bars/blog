@@ -45,6 +45,8 @@ export const refreshTokenGuard = async (req: Request, res: Response, next: NextF
 
         req.userId = userId
 
+        req.deviceId = payload.deviceId
+
         return next()
     }
 

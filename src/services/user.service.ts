@@ -50,9 +50,10 @@ export class UserService {
     static async deleteRefreshTokenByUserId(userId: string, deviceId: string, refreshToken: string) {
         try {
 
-            const deletedSession = await SessionServices.deleteOneSessions(deviceId)
+            // теперь удаляем только сессию так как ни black листа ни отдельной таблицы под RefreshToken нет
+            return await SessionServices.deleteOneSessions(deviceId)
 
-            return await UserRepository.deleteRefreshToken(userId, refreshToken)
+            // return await UserRepository.deleteRefreshToken(userId, refreshToken)
 
         } catch (e) {
             console.error(e)
