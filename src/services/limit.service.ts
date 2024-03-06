@@ -20,7 +20,7 @@ export class LimitService {
 
             console.log(checked, typeof checked, 'jopa')
 
-            if (typeof checked === "number" && checked + 1 >= 5) return null
+            if (typeof checked === "number" && checked + 1 > 5) return null
 
             const result: string | null = await LimitRepository.create({...data, date: dateForCompare.toString()})
 
