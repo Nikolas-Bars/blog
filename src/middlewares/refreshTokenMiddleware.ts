@@ -9,6 +9,8 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     if (!req.cookies.refreshToken) return res.sendStatus(401)
 
+    console.log(req.cookies.refreshToken, 'OLD')
+
     const refreshToken = req.cookies.refreshToken
     // проверяем что он еще действует
     const payload: any = await JWTService.verifyRefreshToken(refreshToken)

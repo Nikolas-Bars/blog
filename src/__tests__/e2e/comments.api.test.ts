@@ -80,7 +80,6 @@ describe('comments', () => {
 
         expect.setState({ blogIdForPost: responseBlog.body.id.toString(), postId: createdPost.id.toString(), token: authData.body.accessToken })
 
-
     })
 
     it('should be created new comment for post', async () => {

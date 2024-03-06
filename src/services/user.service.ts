@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import {CreateUserInputModel} from "../models/users/input/create.user.input.model";
 import {OutputUser} from "../models/users/output/output-user";
 import {ObjectId} from "mongodb";
+import {SessionServices} from "./session.service";
 
 export class UserService {
 
@@ -46,10 +47,12 @@ export class UserService {
 
     }
 
-    static async deleteRefreshTokenByUserId(userId: string) {
+    static async deleteRefreshTokenByUserId(userId: string, deviceId: string, refreshToken: string) {
         try {
 
-            return await UserRepository.deleteRefreshToken(userId)
+            const deletedSession = await SessionServices.deleteOneSessions(deviceId)
+
+            return await UserRepository.deleteRefreshToken(userId, refreshToken)
 
         } catch (e) {
             console.error(e)
