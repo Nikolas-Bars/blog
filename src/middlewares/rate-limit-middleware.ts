@@ -23,7 +23,7 @@ export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, 
     const dateForCompare = currentDate.getTime() + 10000
 
     const currentCountRequests = await LimitService.checkAndCreate({date: date.toString(), userId: req.userId || '11', url, ip: ip}, dateForCompare)
-
+    console.log(currentCountRequests, 'currentCountRequests')
     if (currentCountRequests === null) return res.sendStatus(429)
 
     return next()
