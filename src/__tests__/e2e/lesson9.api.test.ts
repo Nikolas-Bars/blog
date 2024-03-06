@@ -118,8 +118,6 @@ describe('/users', () => {
 
         const { token } = expect.getState()
 
-        const updatedRefreshTokenForFirstUser = refreshResult.headers['set-cookie'][0].split(';')[0].split('=')[1]
-
         const get4Section = await request(app)
             .get('/security/devices')
             .set('authorization', `Bearer ${token}`)
@@ -147,8 +145,7 @@ describe('/users', () => {
 
         ////////////////////////////////////////////////////
 
-        console.log(updatedRefreshTokenForFirstUser, 'updatedRefreshTokenForFirstUser')
-        console.log(refreshToken1, 'refreshToken1')
+        const updatedRefreshTokenForFirstUser = refreshResult.headers['set-cookie'][0].split(';')[0].split('=')[1]
 
         await request(app)
             .post('/auth/logout')
