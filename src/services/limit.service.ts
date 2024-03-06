@@ -18,7 +18,7 @@ export class LimitService {
 
             const checked: number | null = await this.Check(data)
 
-            if (typeof checked === "number" && checked >= 5) return null
+            if (typeof checked === "number" && checked + 1 >= 5) return null
 
             const result: string | null = await LimitRepository.create({...data, date: dateForCompare.toString()})
 

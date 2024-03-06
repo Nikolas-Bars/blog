@@ -11,7 +11,7 @@ import {rateLimitMiddleware} from "../middlewares/rate-limit-middleware";
 
 export const authRoute = express.Router()
 
-authRoute.post('/login', authValidator(), rateLimitMiddleware, async (req: RequestWithBody<InputAuthModel>, res: Response) => {
+authRoute.post('/login', rateLimitMiddleware, authValidator(), async (req: RequestWithBody<InputAuthModel>, res: Response) => {
 
     const ip = req.header('x-forwarded-for') || req.socket.remoteAddress
 
@@ -61,7 +61,7 @@ authRoute.post('/logout', refreshTokenMiddleware, async (req: Request, res: Resp
 
 })
 
-authRoute.post('/registration', registrationValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/registration', rateLimitMiddleware, registrationValidator(), async (req: Request, res: Response) => {
     const data: RegistrationDataType = {
         login: req.body.login,
         password: req.body.password,
@@ -76,7 +76,7 @@ authRoute.post('/registration', registrationValidator(), rateLimitMiddleware, as
 
 })
 
-authRoute.post('/registration-confirmation', confirmationValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/registration-confirmation', rateLimitMiddleware, confirmationValidator(), async (req: Request, res: Response) => {
 
     const code = req.body.code
 
@@ -88,7 +88,7 @@ authRoute.post('/registration-confirmation', confirmationValidator(), rateLimitM
 
 })
 
-authRoute.post('/registration-email-resending', resendingValidator(), rateLimitMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/registration-email-resending', rateLimitMiddleware, resendingValidator(), async (req: Request, res: Response) => {
 
     const email = req.body.email
 
