@@ -41,6 +41,8 @@ authRoute.post('/refresh-token', refreshTokenMiddleware, rateLimitMiddleware, as
         accessToken: tokens.accessToken
     }
 
+    console.log(tokens.refreshToken, 'NEW')
+
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
 
     return res.status(200).json(tokenObject)
@@ -49,7 +51,9 @@ authRoute.post('/refresh-token', refreshTokenMiddleware, rateLimitMiddleware, as
 
 authRoute.post('/logout', refreshTokenMiddleware, async (req: Request, res: Response) => {
 
-    const clear = await UserService.deleteRefreshTokenByUserId(req.userId)
+    const refreshToken = req.cookies.refreshToken
+
+    const clear = await UserService.deleteRefreshTokenByUserId(req.userId, req.deviceId, refreshToken)
 
     res.clearCookie('refreshToken');
 

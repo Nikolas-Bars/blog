@@ -1,4 +1,4 @@
-import {usersCollection} from "../db/db";
+import {blackListRefreshCollection, usersCollection} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
@@ -72,12 +72,12 @@ export class UserRepository {
         }
     }
 
-    static async deleteRefreshToken(userId: string): Promise<boolean | null> {
+    static async deleteRefreshToken(userId: string, refreshToken: string): Promise<boolean | null> {
         try {
 
-            const result = await usersCollection.updateOne({ _id: new ObjectId(userId) }, { $unset: { 'refreshToken': '' } })
+            await blackListRefreshCollection.insertOne({token: refreshToken})
 
-            return !!result.modifiedCount
+            return true
 
         } catch (e) {
 
