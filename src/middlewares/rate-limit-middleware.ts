@@ -12,7 +12,10 @@ export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, 
 
     const ip = req.header('x-forwarded-for') || req.socket.remoteAddress || '127.001'
 
-    console.log(url, ip, '///////', url2, 'url and ip')
+
+    console.log(req.socket.remoteAddress, 'req.socket.remoteAddress')
+    console.log(req.connection.remoteAddress, 'req.connection.remoteAddress')
+    console.log(req.header('x-forwarded-for'), ',,,,req.header(x-forwarded-for)')
 
     // const user = await UserRepository.findByLoginOrEmail(req.body.loginOrEmail)
     //
