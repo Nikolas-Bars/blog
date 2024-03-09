@@ -1,11 +1,4 @@
-import {PostType} from "../db/post-db";
-import {blogsCollection, postsCollection, requestHistoryCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
-import {ObjectId} from "mongodb";
-import {PostDbType} from "../models/posts/db/post-db";
-import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
-import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {requestHistoryCollection} from "../db/db";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 
 type NewPostDataType = {

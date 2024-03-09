@@ -18,7 +18,7 @@ authRoute.post('/login', rateLimitMiddleware, authValidator(), async (req: Reque
     const deviceName =  req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
 
     const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.login(req.body.loginOrEmail, req.body.password, deviceName!, ip)
-    console.log(24654654654654)
+
     if (!tokens) return res.sendStatus(401)
 
     const tokenObject = {

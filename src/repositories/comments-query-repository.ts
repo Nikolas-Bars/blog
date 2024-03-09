@@ -1,17 +1,8 @@
-import {commentsCollection, postsCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
-import {ObjectId, SortDirection} from "mongodb";
+import {CommentsModel} from "../db/db";
+import {SortDirection} from "mongodb";
 import {PaginationType} from "../models/common";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {commentMapper} from "../models/comments/mappers/post-mapper";
-
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
 
 export type QueryPostDataType = {
     pageNumber: number
@@ -25,19 +16,24 @@ export class CommentsQueryRepository {
     static async getCommentsForPostById(queryData: QueryPostDataType, postId: string): Promise<PaginationType<CommentOutputType> | null> {
 
         try {
-
+            // worked
             const {sortDirection, sortBy, pageSize, pageNumber} = queryData
 
             const filter = { postId: postId }
 
-            const comments = await commentsCollection
+            let sortOptions: {[key: string]: SortDirection} = {};
+
+            if (sortBy && sortDirection) {
+                sortOptions[sortBy] = sortDirection;
+            }
+
+            const comments = await CommentsModel
                 .find(filter)
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
-                .sort(sortBy, sortDirection)
-                .toArray()
+                .sort(sortOptions)
 
-            const totalCount = await commentsCollection
+            const totalCount = await CommentsModel
                 .countDocuments(filter)
 
             const pagesCount = Math.ceil(totalCount / pageSize)

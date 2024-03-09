@@ -1,23 +1,23 @@
-import {blogsCollection} from "../db/db";
+import {blogsModel} from "../db/db";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {ObjectId} from "mongodb";
 import {UpdateBlogInputModel} from "../models/blogs/input/update.blog.input.model";
+import {UpdateWriteOpResult} from "mongoose";
 
 export class BlogRepository {
-
+    // worked
     static async createBlog(blog: BlogDb): Promise<string | null> {
         try {
-
-            const res = await blogsCollection.insertOne(
+            const res = await blogsModel.insertMany([
                 {
                     name: blog.name,
                     description: blog.description,
                     websiteUrl: blog.websiteUrl,
                     isMembership: false,
                     createdAt: blog.createdAt
-                })
+                }])
 
-            return res.insertedId.toString()
+            return res ? res[0]._id.toString() : null
 
         } catch (e) {
 
@@ -28,8 +28,8 @@ export class BlogRepository {
 
     static async updateBlog(body: UpdateBlogInputModel, id: string): Promise<boolean> {
         try {
-
-            const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: false, websiteUrl: body.websiteUrl}})
+            // worked
+            const result: UpdateWriteOpResult = await blogsModel.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: false, websiteUrl: body.websiteUrl}})
 
             return !!result.matchedCount
 
@@ -42,9 +42,10 @@ export class BlogRepository {
     }
 
     static async deleteBlog(blogId: string): Promise<boolean> {
+        // worked
         try {
 
-            const result = await blogsCollection.deleteOne({_id: new ObjectId(blogId)})
+            const result: any = await blogsModel.deleteOne({_id: new ObjectId(blogId)})
 
             return !!result.deletedCount
 

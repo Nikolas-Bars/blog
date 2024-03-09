@@ -2,6 +2,7 @@ import {blackListRefreshCollection, usersCollection, UsersModel} from "../db/db"
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
+import {UpdateWriteOpResult} from "mongoose";
 
 export type MeDataType = {
     email: string
@@ -30,7 +31,7 @@ export class UserRepository {
     static async confirmEmail(id: string): Promise<boolean> {
         try {
             // worked
-            const result = await UsersModel.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
+            const result: UpdateWriteOpResult = await UsersModel.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
 
             return !!result.modifiedCount
 
@@ -59,7 +60,7 @@ export class UserRepository {
     static async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
         try {
             // worked
-            const result = await UsersModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
+            const result: UpdateWriteOpResult = await UsersModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
 
             return result.modifiedCount ? result.modifiedCount : null
 
@@ -74,7 +75,7 @@ export class UserRepository {
 
         try {
             // worked
-            const result = await UsersModel.findOne({ _id: new ObjectId(userId) })
+            const result: UserDbType | null = await UsersModel.findOne({ _id: new ObjectId(userId) })
 
             if(!result) return null
 

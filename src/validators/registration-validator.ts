@@ -1,11 +1,11 @@
 import {body} from "express-validator";
 import {inputValidatorMiddleware} from "../middlewares/input-validation-middleware";
-import {usersCollection} from "../db/db";
+import {UsersModel} from "../db/db";
 
 const loginValidator = body('login')
     .isString().withMessage('login must be string type').trim().isLength({min: 3, max: 10}).withMessage('incorrect length of login')
     .custom(async (login) => {
-        const user = await usersCollection.findOne({login: login})
+        const user = await UsersModel.findOne({login: login})
 
         if (!user) {
             return true;
@@ -22,7 +22,7 @@ const emailValidator = body('email')
     .isString().withMessage('email must be string type').trim()
     .notEmpty().isEmail().withMessage('incorrect email value')
     .custom(async (email) => {
-        const user = await usersCollection.findOne({ email: email })
+        const user = await UsersModel.findOne({ email: email })
 
         if (!user) {
             return true;

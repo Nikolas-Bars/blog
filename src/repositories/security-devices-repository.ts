@@ -103,7 +103,7 @@ export class SecurityDevicesRepository {
 
             const lastActiveDate = new Date().toISOString()
 
-            const result = await securityDevicesSessionCollection.updateOne({deviceId: deviceId}, {$set: {
+            await securityDevicesSessionCollection.updateOne({deviceId: deviceId}, {$set: {
                 issueAt: iat, lastActiveDate: lastActiveDate
 
             }})
