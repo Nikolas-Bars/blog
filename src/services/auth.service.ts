@@ -170,7 +170,7 @@ export class AuthService {
     static async updateTokens(user_id: string, deviceId: string): Promise<{ accessToken:string, refreshToken: string } | null> {
 
         try {
-
+            console.log(11111)
             const accessToken = await JWTService.createToken(user_id)
 
             const refreshToken = await JWTService.createRefreshToken(user_id, deviceId)

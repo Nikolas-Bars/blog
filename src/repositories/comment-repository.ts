@@ -1,4 +1,4 @@
-import {commentsCollection, CommentsModel} from "../db/db";
+import {CommentsModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {WithId} from "mongodb";
 import {CommentInputType} from "../models/comments/input/comment-input";

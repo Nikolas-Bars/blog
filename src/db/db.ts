@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import {MongoClient} from "mongodb";
+import {MongoClient, WithId} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDbType} from "../models/posts/db/post-db";
 import {UserDbType} from "../models/users/db/user-db";
@@ -27,17 +27,12 @@ export const usersCollection = dataBase.collection<UserDbType>('users')
 export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 export const postsCollection = dataBase.collection<PostDbType>('posts')
 export const commentsCollection = dataBase.collection<CommentInputType>('comments')
+export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securityDevices')
+export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requestHistory')
+export const blackListRefreshCollection = dataBase.collection<any>('blackListRefresh')
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
-export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securityDevices')
-
-export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requestHistory')
-
-export const blackListRefreshCollection = dataBase.collection<any>('blackListRefresh')
 
 const usersSchema = new mongoose.Schema<UserDbType>({
     email: {type: String, required: true},
@@ -68,12 +63,25 @@ const postsSchema = new mongoose.Schema<PostDbType>({
     blogName: {type: String, required: true},
     createdAt: {type: String, required: true},
 });
-
 const commentsSchema = new mongoose.Schema<CommentInputType>({
     content: {type: String, required: true},
     commentatorInfo: Object,
     postId: {type: String, required: true},
     createdAt: {type: String, required: true},
+});
+const securitySchema = new mongoose.Schema<SecurityDbType>({
+    userId: String,
+    issueAt: String,
+    deviceId: String,
+    lastActiveDate: String,
+    title: String,
+    ip: String,
+});
+const requestHistorySchema = new mongoose.Schema<WithId<RequestHistoryDbType>>({
+    userId: {type: String, required: true},
+    url: {type: String, required: true},
+    ip: {type: String, required: true},
+    date: {type: String, required: true}
 });
 
 export const blogsModel = mongoose.model('blogs', blogsSchema);
@@ -83,6 +91,10 @@ export const UsersModel = mongoose.model('users', usersSchema);
 export const PostsModel = mongoose.model('posts', postsSchema);
 
 export const CommentsModel = mongoose.model('comments', commentsSchema);
+
+export const SecurityModel = mongoose.model('security', securitySchema);
+
+export const RequestHistoryModel = mongoose.model('requestHistory', requestHistorySchema);
 
 export const runDb = async () => {
     try {

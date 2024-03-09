@@ -3,6 +3,7 @@ import {JWTService} from "../services/JWT.service";
 import {UsersModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {SessionServices} from "../services/session.service";
+import {SecurityDbType} from "../models/securityDevices/securityDbType";
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction)=> {
 
@@ -19,9 +20,12 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         const userId = payload.userId.toString()
 
         // ТЕСТ
-        const session = await SessionServices.isSessionExists(deviceId, userId)
+        const session: SecurityDbType | null = await SessionServices.isSessionExists(deviceId, userId)
 
-        if (!session || session.issueAt !== payload.iat) return res.sendStatus(401)
+        if (!session || session.issueAt !== payload.iat.toString()) {
+
+            return res.sendStatus(401)
+        }
 
         /////////////
         const user = await UsersModel.findOne({_id: new ObjectId(userId)})

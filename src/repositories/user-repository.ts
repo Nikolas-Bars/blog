@@ -1,5 +1,5 @@
-import {blackListRefreshCollection, usersCollection, UsersModel} from "../db/db";
-import {ObjectId, SortDirection, WithId} from "mongodb";
+import {UsersModel} from "../db/db";
+import {ObjectId, WithId} from "mongodb";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
 import {UpdateWriteOpResult} from "mongoose";

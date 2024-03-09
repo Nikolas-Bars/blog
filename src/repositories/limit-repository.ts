@@ -1,4 +1,4 @@
-import {requestHistoryCollection} from "../db/db";
+import {RequestHistoryModel} from "../db/db";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 
 type NewPostDataType = {
@@ -12,12 +12,12 @@ export class LimitRepository {
 
     static async create(data: RequestHistoryDbType): Promise<string | null> {
         try {
-
-            const result = await requestHistoryCollection.insertOne(data)
+            // worked
+            const result = await RequestHistoryModel.insertMany([data])
 
             if (!result) return null
 
-            return result.insertedId.toString()
+            return result ? result[0]._id.toString() : null
 
         } catch (e) {
 
@@ -28,10 +28,8 @@ export class LimitRepository {
 
     static async check(data: RequestHistoryDbType): Promise<number | null> {
         try {
-
-            const result = await requestHistoryCollection.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
-
-            return result
+            // worked
+            return await RequestHistoryModel.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
 
         } catch (e) {
             return null
