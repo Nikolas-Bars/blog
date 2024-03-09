@@ -3,7 +3,6 @@ export type UserDbType = {
     login: string
     createdAt: string
     password: string
-    refreshToken?: string
     salt?: string
     emailConfirmation?: {
         // confirmationCode - код который уйдет пользователю

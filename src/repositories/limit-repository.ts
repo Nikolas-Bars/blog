@@ -35,7 +35,7 @@ export class LimitRepository {
 
     static async check(data: RequestHistoryDbType): Promise<number | null> {
         try {
-            console.log(data, 'datadatadatadatadatadatadata')
+
             const result = await requestHistoryCollection.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
 
             return result

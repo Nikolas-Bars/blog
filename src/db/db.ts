@@ -6,6 +6,7 @@ import {UserDbType} from "../models/users/db/user-db";
 import {CommentInputType} from "../models/comments/input/comment-input";
 import {SecurityDbType} from "../models/securityDevices/securityDbType";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
+import mongoose from "mongoose";
 
 dotenv.config()
 // указываем порт
@@ -35,14 +36,37 @@ export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType
 
 export const blackListRefreshCollection = dataBase.collection<any>('blackListRefresh')
 
+const usersSchema = new mongoose.Schema({
+    email: String,
+    login: String,
+    createdAt: String,
+    password: String,
+    salt: String,
+    emailConfirmation: {
+        // confirmationCode - код который уйдет пользователю
+        confirmationCode: String,
+        // expirationDate - дата когда код устареет
+        expirationDate: Date,
+        isConfirmed: Boolean
+    }
+});
+
+export const UsersModel = mongoose.model('users', usersSchema);
+
 export const runDb = async () => {
     try {
         // при запуске функции коннктимся MongoDb
-        await client.connect()
+        // await client.connect()
+
+        await mongoose.connect(uri + '/' + 'blogs-db');
+
         console.log('Client connected to DB')
+
         console.log(console.log(`blog was started on ${port} port`))
+
     } catch (e) {
         console.error(e, 'runDb')
-        await client.close()
+        // await client.close()
+        await mongoose.disconnect()
     }
 }

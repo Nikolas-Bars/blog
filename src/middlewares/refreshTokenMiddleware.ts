@@ -14,7 +14,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     const payload: any = await JWTService.verifyRefreshToken(refreshToken)
 
     // const black = await blackListRefreshCollection.findOne({token: refreshToken})
-    console.log(payload, 'payload, black')
+
     if (payload) {
 
         const deviceId = payload.deviceId
@@ -23,7 +23,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
         const deviceName = req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
 
-        console.log(deviceId, userId, payload.iat, deviceName, 'deviceId, userId, payload.iat, deviceName')
 
         // ТЕСТ
         const session = await SessionServices.isSessionExists(deviceId, userId)

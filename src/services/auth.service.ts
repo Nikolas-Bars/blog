@@ -125,6 +125,7 @@ export class AuthService {
     static async login(loginOrEmail: string, password: string, deviceName: string, ip?: string): Promise<{ accessToken:string, refreshToken: string } | null> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
+
             // если пользователь не найден или у него нет подтверждения почты
             if (!user || (user.emailConfirmation && !user.emailConfirmation.isConfirmed)) {
                 return null

@@ -18,7 +18,7 @@ authRoute.post('/login', rateLimitMiddleware, authValidator(), async (req: Reque
     const deviceName =  req.headers['user-agent'] ? req.headers['user-agent'] : 'unknown'
 
     const tokens: { accessToken:string, refreshToken: string } | null = await AuthService.login(req.body.loginOrEmail, req.body.password, deviceName!, ip)
-
+    console.log(24654654654654)
     if (!tokens) return res.sendStatus(401)
 
     const tokenObject = {
@@ -77,7 +77,7 @@ authRoute.post('/registration', rateLimitMiddleware, registrationValidator(), as
 })
 
 authRoute.post('/registration-confirmation', rateLimitMiddleware, confirmationValidator(), async (req: Request, res: Response) => {
-
+    //
     const code = req.body.code
 
     const result = await AuthService.confirmEmail(code)
