@@ -43,7 +43,36 @@ export class UserRepository {
 
     }
 
+    static async updatePassword(userId: string, password: string): Promise<boolean> {
+        try {
+            // worked
+            const result: UpdateWriteOpResult = await UsersModel.updateOne({_id: new ObjectId(userId)}, {$set: {password: password}})
+
+            return !!result.modifiedCount
+
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
+    }
+
     static async getUserByConfirmCode(code: string): Promise<WithId<UserDbType> | null> {
+        try {
+            // worked
+            return await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+    }
+
+    static async getUserByRecoveryCode(code: string): Promise<WithId<UserDbType> | null> {
         try {
             // worked
             return await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
@@ -61,6 +90,20 @@ export class UserRepository {
         try {
             // worked
             const result: UpdateWriteOpResult = await UsersModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
+
+            return result.modifiedCount ? result.modifiedCount : null
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+    }
+
+    static async updateRecoveryCode(userId: string, code: string, newExpirationDate: Date) {
+        try {
+            // worked
+            const result: UpdateWriteOpResult = await UsersModel.updateOne({ _id: new ObjectId(userId) }, {$set: {'emailConfirmation.recoveryCode': code, 'emailConfirmation.expirationRecoveryDate': newExpirationDate}})
 
             return result.modifiedCount ? result.modifiedCount : null
 

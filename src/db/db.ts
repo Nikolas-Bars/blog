@@ -45,7 +45,9 @@ const usersSchema = new mongoose.Schema<UserDbType>({
         confirmationCode: String,
         // expirationDate - дата когда код устареет
         expirationDate: Date,
-        isConfirmed: Boolean
+        expirationRecoveryDate: Date,
+        isConfirmed: Boolean,
+        recoveryCode: {type: "String", default: null}
     }
 });
 const blogsSchema = new mongoose.Schema<BlogDb>({

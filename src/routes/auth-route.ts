@@ -86,9 +86,21 @@ authRoute.post('/password-recovery', rateLimitMiddleware, emailRegisterValidator
 
     if (!user) return res.sendStatus(204)
 
-    await AuthService.sendRecoveryCode(req.body.email)
+    await AuthService.sendRecoveryCode(req.body.email, user._id.toString())
 
     return res.sendStatus(204)
+
+})
+
+authRoute.post('/new-password', rateLimitMiddleware, emailRegisterValidator(), async (req: Request, res: Response) => {
+
+    const recoveryCode = req.body.recoveryCode
+
+    const newPassword = req.body.newPassword
+
+    const result = await AuthService.checkRecoveryCode(recoveryCode, newPassword)
+
+    return result ? res.sendStatus(204) : res.sendStatus(400)
 
 })
 
