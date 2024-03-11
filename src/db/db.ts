@@ -29,7 +29,7 @@ export const postsCollection = dataBase.collection<PostDbType>('posts')
 export const commentsCollection = dataBase.collection<CommentInputType>('comments')
 export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securitydevices')
 export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requesthistory')
-export const blackListRefreshCollection = dataBase.collection<any>('blackListrefresh')
+export const blackListRefreshCollection = dataBase.collection<any>('blacklistrefresh')
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -84,7 +84,7 @@ const requestHistorySchema = new mongoose.Schema<WithId<RequestHistoryDbType>>({
     date: {type: String, required: true}
 });
 
-export const blogsModel = mongoose.model('blogs', blogsSchema);
+export const BlogsModel = mongoose.model('blogs', blogsSchema);
 
 export const UsersModel = mongoose.model('users', usersSchema);
 
@@ -101,7 +101,7 @@ export const runDb = async () => {
         // при запуске функции коннктимся MongoDb
         // await client.connect()
 
-        await mongoose.connect(uri + '/' + 'blogsdb');
+        await mongoose.connect(uri + '/blogsdb');
 
         console.log('Client connected to DB')
 
