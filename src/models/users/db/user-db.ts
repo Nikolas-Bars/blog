@@ -9,6 +9,8 @@ export type UserDbType = {
         confirmationCode: string
         // expirationDate - дата когда код устареет
         expirationDate: Date
+        expirationRecoveryDate: Date
         isConfirmed: boolean
+        recoveryCode: boolean
     }
 }

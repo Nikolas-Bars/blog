@@ -41,6 +41,35 @@ export class AuthService {
 
     }
 
+    static async checkRecoveryCode(code: string, password: string) {
+
+        try {
+
+            const user = await UserRepository.getUserByRecoveryCode(code)
+
+            if (user && user.emailConfirmation && user.emailConfirmation.expirationRecoveryDate > new Date()) {
+
+                // создаем хэш пароля
+                const salt = await bcrypt.genSalt(10)
+
+                const passwordHash = await UserService._generateHash(password, salt)
+
+                const result = await UserRepository.updatePassword(user._id.toString(), passwordHash)
+
+                return result ? result : null
+
+            } else {
+                return null
+            }
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
+
+    }
+
     static async resendConfirmationCode(email: string): Promise<string | null> {
 
         const user: WithId<UserDbType> | null = await UserRepository.findUserByEmail(email)
@@ -122,7 +151,7 @@ export class AuthService {
 
     }
 
-    static async sendRecoveryCode(email: string) {
+    static async sendRecoveryCode(email: string, userId: string) {
 
         try {
 
@@ -130,7 +159,15 @@ export class AuthService {
 
             const result = await EmailManager.sendRecoveryMail(email, 'Recovery code', recoveryCode)
 
-            return result ? result : null
+            if (!result) return null
+
+            const exp = add.add(new Date(), {
+                minutes: 3
+            })
+
+            await UserRepository.updateRecoveryCode(userId, recoveryCode, exp)
+
+            return result
 
         } catch (e) {
 
