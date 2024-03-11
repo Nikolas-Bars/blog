@@ -22,7 +22,7 @@ export class BlogRepository {
             return res ? res[0]._id.toString() : null
 
         } catch (e) {
-
+            console.error(e, 'eeeeeeee')
             return null
 
         }
