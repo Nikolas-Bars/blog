@@ -101,7 +101,7 @@ export const runDb = async () => {
         // при запуске функции коннктимся MongoDb
         // await client.connect()
 
-        await mongoose.connect(uri + '/blogsdb');
+        await mongoose.connect(uri + 'blogsdb');
 
         console.log('Client connected to DB')
 
