@@ -68,9 +68,9 @@ export class BlogServices {
     }
 
     static async createBlogService(newBlog:  CreateBlogInputModel &  { isMembership: boolean } ): Promise<OutputBlogType | null> {
-
+        console.log(newBlogId, '144444444')
         const newBlogId = await BlogRepository.createBlog({ ...newBlog, createdAt: (new Date()).toISOString() })
-        console.log(newBlogId, 'newBlogIdnewBlogIdnewBlogId')
+        console.log(newBlogId, 'pzdc')
         if (newBlogId) {
 
             return await BlogQueryRepository.getBlogById(newBlogId)

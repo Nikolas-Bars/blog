@@ -8,6 +8,8 @@ export class BlogRepository {
     // worked
     static async createBlog(blog: BlogDb): Promise<string | null> {
         try {
+            console.log('jopa')
+            console.log(blog, 'jopa')
             const res = await blogsModel.insertMany([
                 {
                     name: blog.name,
@@ -16,7 +18,7 @@ export class BlogRepository {
                     isMembership: false,
                     createdAt: blog.createdAt
                 }])
-            console.log(res, 'ressss')
+            console.log(res, 'blog jopa ressss')
             return res ? res[0]._id.toString() : null
 
         } catch (e) {
