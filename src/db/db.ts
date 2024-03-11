@@ -94,14 +94,14 @@ export const CommentsModel = mongoose.model('comments', commentsSchema);
 
 export const SecurityModel = mongoose.model('security', securitySchema);
 
-export const RequestHistoryModel = mongoose.model('requestHistory', requestHistorySchema);
+export const RequestHistoryModel = mongoose.model('requesthistory', requestHistorySchema);
 
 export const runDb = async () => {
     try {
         // при запуске функции коннктимся MongoDb
         // await client.connect()
 
-        await mongoose.connect(uri + '/' + 'blogs-db');
+        await mongoose.connect(uri + '/' + 'blogsdb');
 
         console.log('Client connected to DB')
 
