@@ -103,7 +103,7 @@ export const runDb = async () => {
 
         await mongoose.connect(uri + 'blogsdb');
 
-        console.log('Client connected to DB')
+        console.log('Client connected to DB - ', uri + 'blogsdb')
 
         console.log(console.log(`blog was started on ${port} port`))
 
