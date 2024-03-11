@@ -21,15 +21,15 @@ const uri = process.env.MONGO_URI || "mongodb://localhost:27017"
 
 const client = new MongoClient(uri)
 // указываем к какой конкретно базе коннектимся
-const dataBase = client.db('blogs-db')
+const dataBase = client.db('blogsdb')
 // выбираем нужные коллекции с которыми будем работать
 export const usersCollection = dataBase.collection<UserDbType>('users')
 export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 export const postsCollection = dataBase.collection<PostDbType>('posts')
 export const commentsCollection = dataBase.collection<CommentInputType>('comments')
-export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securityDevices')
-export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requestHistory')
-export const blackListRefreshCollection = dataBase.collection<any>('blackListRefresh')
+export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securitydevices')
+export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requesthistory')
+export const blackListRefreshCollection = dataBase.collection<any>('blackListrefresh')
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -94,14 +94,14 @@ export const CommentsModel = mongoose.model('comments', commentsSchema);
 
 export const SecurityModel = mongoose.model('security', securitySchema);
 
-export const RequestHistoryModel = mongoose.model('requestHistory', requestHistorySchema);
+export const RequestHistoryModel = mongoose.model('requesthistory', requestHistorySchema);
 
 export const runDb = async () => {
     try {
         // при запуске функции коннктимся MongoDb
         // await client.connect()
 
-        await mongoose.connect(uri + '/' + 'blogs-db');
+        await mongoose.connect(uri + '/' + 'blogsdb');
 
         console.log('Client connected to DB')
 
