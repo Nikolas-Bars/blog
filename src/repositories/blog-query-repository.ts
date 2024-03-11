@@ -1,4 +1,4 @@
-import {blogsModel, PostsModel} from "../db/db";
+import {BlogsModel, PostsModel} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {OutputBlogType} from "../models/blogs/output/blog-output-model";
 import {blogMapper} from "../models/blogs/mappers/blog-mapper";
@@ -46,7 +46,7 @@ export class BlogQueryRepository {
             if (sortBy && sortDirection) {
                 sortOptions[sortBy] = sortDirection;
             }
-            const blogs = await blogsModel
+            const blogs = await BlogsModel
                 // ищем элементы с параметрами из объекта filter
                 .find(filter)
                 // указываем как сортировать результаты - по умолчанию по дате создания
@@ -57,7 +57,7 @@ export class BlogQueryRepository {
                 .limit(pageSize)
 
             // получаем общее количество документов
-            const totalCount = await blogsModel
+            const totalCount = await BlogsModel
                 .countDocuments(filter)
 
             // считаем количество страниц
@@ -127,7 +127,7 @@ export class BlogQueryRepository {
     static async getBlogById(blogId: string): Promise<OutputBlogType | null> {
         try {
             // worked
-            const blog = await blogsModel.findOne({_id: new ObjectId(blogId)})
+            const blog = await BlogsModel.findOne({_id: new ObjectId(blogId)})
 
             if (blog) return blogMapper(blog)
 
