@@ -42,7 +42,7 @@ export class CommentRepository {
     static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
         try {
             // worked
-            const comment: WithId<CommentInputType> = await CommentsModel.findOne({_id: new ObjectId(commentId)})
+            const comment: WithId<CommentInputType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
 
             if (comment) {
                 return {
