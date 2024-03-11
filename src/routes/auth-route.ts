@@ -4,10 +4,14 @@ import {InputAuthModel, RegistrationDataType} from "../models/auth/input/input-a
 import {AuthService} from "../services/auth.service";
 import {authValidator, confirmationValidator, resendingValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
-import {registrationValidator} from "../validators/registration-validator";
+import {
+    emailRegisterValidator,
+    registrationValidator
+} from "../validators/registration-validator";
 import {refreshTokenMiddleware} from "../middlewares/refreshTokenMiddleware";
 import {UserService} from "../services/user.service";
 import {rateLimitMiddleware} from "../middlewares/rate-limit-middleware";
+import {UserRepository} from "../repositories/user-repository";
 
 export const authRoute = express.Router()
 
@@ -73,6 +77,18 @@ authRoute.post('/registration', rateLimitMiddleware, registrationValidator(), as
     if (result) return res.sendStatus(204)
 
     else return res.sendStatus(400)
+
+})
+
+authRoute.post('/password-recovery', rateLimitMiddleware, emailRegisterValidator(), async (req: Request, res: Response) => {
+
+    const user = await UserRepository.findByLoginOrEmail(req.body.email)
+
+    if (!user) return res.sendStatus(204)
+
+    await AuthService.sendRecoveryCode(req.body.email)
+
+    return res.sendStatus(204)
 
 })
 

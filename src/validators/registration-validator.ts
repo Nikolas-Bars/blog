@@ -19,7 +19,7 @@ const passwordValidator = body('password')
     .isString().withMessage('password must be string type').trim().isLength({min: 6, max: 20}).withMessage('incorrect password length')
 
 const emailValidator = body('email')
-    .isString().withMessage('email must be string type').trim()
+    .isString().withMessage('email must be string type').trim().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     .notEmpty().isEmail().withMessage('incorrect email value')
     .custom(async (email) => {
         const user = await UsersModel.findOne({ email: email })
@@ -32,6 +32,15 @@ const emailValidator = body('email')
         }
     }).withMessage('email exists in system')
 
+
+const emailRecoveryValidator = body('email')
+    .isString().withMessage('email must be string type').trim().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
+    .notEmpty().isEmail().withMessage('incorrect email value')
+
 export const registrationValidator = () => {
     return [loginValidator, passwordValidator, emailValidator, inputValidatorMiddleware]
+}
+
+export const emailRegisterValidator =()=> {
+    return [emailRecoveryValidator, inputValidatorMiddleware]
 }
