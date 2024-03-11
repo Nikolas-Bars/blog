@@ -180,8 +180,6 @@ describe('/users', () => {
 
         expect(get1Sections.body).toHaveLength(1);
 
-        console.log(get1Sections.body)
-
     })
 
 })

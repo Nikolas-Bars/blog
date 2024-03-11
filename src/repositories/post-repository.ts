@@ -1,11 +1,10 @@
-import {PostType} from "../db/post-db";
-import {blogsCollection, postsCollection} from "../db/db";
 import {postMapper} from "../models/posts/mappers/post-mapper";
 import {OutputPostModel} from "../models/posts/output/output-post";
 import {ObjectId} from "mongodb";
 import {PostDbType} from "../models/posts/db/post-db";
-import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
 import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {UpdateWriteOpResult} from "mongoose";
+import {PostsModel} from "../db/db";
 
 type NewPostDataType = {
     title: string,
@@ -16,26 +15,10 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    // static async getAll(): Promise<OutputPostModel[] | false> {
-    //
-    //     try {
-    //
-    //         const posts = await postsCollection.find({}).toArray()
-    //
-    //         return posts.map((post) => {
-    //             return postMapper(post)
-    //         })
-    //
-    //     } catch (e) {
-    //         return false
-    //     }
-    //
-    // }
-
     static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
         try {
-
-            const post = await postsCollection.findOne({_id: new ObjectId(postId)})
+            // worked
+            const post = await PostsModel.findOne({_id: new ObjectId(postId)})
 
             if(!post) {
                 return false
@@ -50,13 +33,14 @@ export class PostRepository {
 
     static async createPost(newPost: PostDbType): Promise<string | null> {
         try {
-                const result = await postsCollection.insertOne(
+                // worked
+                const res = await PostsModel.insertMany([
                     {
                         ...newPost,
                         blogName: newPost.blogName
-                    })
+                    }])
 
-                return result.insertedId.toString()
+                    return res ? res[0]._id.toString() : null
 
         } catch (e) {
             return null
@@ -66,8 +50,8 @@ export class PostRepository {
     static async updatePost(id: string, body: UpdatePostInputModel): Promise<boolean> {
 
         try {
-
-            const result = await postsCollection.updateOne(
+            // worked
+            const result: UpdateWriteOpResult = await PostsModel.updateOne(
                 {_id: new ObjectId(id)},
                 {$set:
                         {
@@ -88,7 +72,8 @@ export class PostRepository {
 
     static async deletePost(postId: string): Promise<boolean> {
         try {
-            const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
+            // worked
+            const result: any = await PostsModel.deleteOne({_id: new ObjectId(postId)})
 
             return !!result.deletedCount
 
@@ -99,8 +84,8 @@ export class PostRepository {
 
     static async deletePostsByBlogId(blogId: string): Promise<boolean> {
         try {
-
-            await postsCollection.deleteMany({ blogId: blogId })
+            // worked
+            await PostsModel.deleteMany({ blogId: blogId })
 
             return true
 

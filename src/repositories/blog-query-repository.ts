@@ -1,5 +1,4 @@
-import {blogsCollection, postsCollection} from "../db/db";
-import {BlogDb} from "../models/blogs/db/blog-db";
+import {blogsModel, PostsModel} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {OutputBlogType} from "../models/blogs/output/blog-output-model";
 import {blogMapper} from "../models/blogs/mappers/blog-mapper";
@@ -26,7 +25,7 @@ export class BlogQueryRepository {
 
     static async getAll(sortData: SortDataType): Promise<PaginationType<OutputBlogType> | null> {
         try{
-
+            // worked
             const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = sortData
 
             let filter = {}
@@ -42,22 +41,25 @@ export class BlogQueryRepository {
                     }
                 }
             }
+            let sortOptions: {[key: string]: SortDirection} = {};
 
-            const blogs = await blogsCollection
+            if (sortBy && sortDirection) {
+                sortOptions[sortBy] = sortDirection;
+            }
+            const blogs = await blogsModel
                 // ищем элементы с параметрами из объекта filter
                 .find(filter)
                 // указываем как сортировать результаты - по умолчанию по дате создания
-                .sort(sortBy, sortDirection)
+                .sort(sortOptions)
                 // указываем параметры пагинации
                 .skip((pageNumber - 1) * pageSize)
                 // количество результатов на странице
                 .limit(pageSize)
-                // преобразуем в массив
-                .toArray() as WithId<BlogDb>[]
 
             // получаем общее количество документов
-            const totalCount = await blogsCollection
+            const totalCount = await blogsModel
                 .countDocuments(filter)
+
             // считаем количество страниц
             const pagesCount = Math.ceil(totalCount / pageSize)
             // возвращаем объект сформированный на основании всех данных
@@ -81,17 +83,23 @@ export class BlogQueryRepository {
 
     static async getPostsByBlogId(blogId: string, queryData: QueryParamsForPostsByBlogId): Promise<PaginationType<OutputPostModel> | null> {
         try {
-
+            // worked
             const {pageNumber, pageSize, sortBy, sortDirection} = queryData
 
-            const posts = await postsCollection
+            let sortOptions: {[key: string]: SortDirection} = {};
+
+            if (sortBy && sortDirection) {
+                sortOptions[sortBy as string] = sortDirection as SortDirection;
+            }
+
+            const posts = await PostsModel
                 .find({ blogId: blogId })
-                .sort(sortBy, sortDirection as SortDirection)
+                .sort(sortOptions)
                 .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
-                .toArray()
 
-            const totalCount = await postsCollection.countDocuments({blogId: blogId})
+
+            const totalCount = await PostsModel.countDocuments({blogId: blogId})
 
             const pagesCount = Math.ceil(totalCount / pageSize)
 
@@ -118,8 +126,8 @@ export class BlogQueryRepository {
 
     static async getBlogById(blogId: string): Promise<OutputBlogType | null> {
         try {
-
-            const blog = await blogsCollection.findOne({_id: new ObjectId(blogId)})
+            // worked
+            const blog = await blogsModel.findOne({_id: new ObjectId(blogId)})
 
             if (blog) return blogMapper(blog)
 

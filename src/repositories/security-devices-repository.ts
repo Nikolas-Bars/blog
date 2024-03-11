@@ -1,7 +1,4 @@
-import {securityDevicesSessionCollection, usersCollection} from "../db/db";
-import {ObjectId, SortDirection, WithId} from "mongodb";
-import {UserDbType} from "../models/users/db/user-db";
-import {OutputUser} from "../models/users/output/output-user";
+import {SecurityModel} from "../db/db";
 import {SecurityDbType} from "../models/securityDevices/securityDbType";
 
 export type MeDataType = {
@@ -15,9 +12,11 @@ export class SecurityDevicesRepository {
     static async CreateSession(session: SecurityDbType) {
         try {
 
-            await securityDevicesSessionCollection.deleteMany({ip: session.ip})
+            await SecurityModel.deleteMany({ip: session.ip})
 
-            return await securityDevicesSessionCollection.insertOne(session)
+            const a = await SecurityModel.insertMany([session])
+            console.log(a, 'aaaa')
+            return a[0]
 
         } catch(e) {
 
@@ -33,7 +32,7 @@ export class SecurityDevicesRepository {
 
             const filter = { userId: userId, deviceId: { $ne: deviceId } };
 
-            await securityDevicesSessionCollection.deleteMany(filter);
+            await SecurityModel.deleteMany(filter);
 
             return true
 
@@ -48,7 +47,7 @@ export class SecurityDevicesRepository {
     static async deleteOneSessions(deviceId: string): Promise<boolean> {
         try {
 
-            const result = await securityDevicesSessionCollection.deleteOne({deviceId: deviceId})
+            await SecurityModel.deleteOne({deviceId: deviceId})
 
             return true
 
@@ -63,7 +62,7 @@ export class SecurityDevicesRepository {
     static async getSessions(userId: string) {
         try {
 
-            const result = await securityDevicesSessionCollection.find({userId: userId}).toArray()
+            const result: SecurityDbType[] = await SecurityModel.find({userId: userId})
 
             return result.map((el) => {
                 return {
@@ -84,7 +83,7 @@ export class SecurityDevicesRepository {
     static async sessionExists(deviceId:  string, userId: string) {
         try {
 
-            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId, userId: userId })
+            const result = await SecurityModel.findOne({ deviceId: deviceId, userId: userId })
 
             if (!result) return null
 
@@ -103,7 +102,7 @@ export class SecurityDevicesRepository {
 
             const lastActiveDate = new Date().toISOString()
 
-            const result = await securityDevicesSessionCollection.updateOne({deviceId: deviceId}, {$set: {
+            await SecurityModel.updateOne({deviceId: deviceId}, {$set: {
                 issueAt: iat, lastActiveDate: lastActiveDate
 
             }})
@@ -116,7 +115,7 @@ export class SecurityDevicesRepository {
     static async getSessionByDeviceId(deviceId: string): Promise<SecurityDbType | null> {
         try {
 
-            const result = await securityDevicesSessionCollection.findOne({ deviceId: deviceId })
+            const result = await SecurityModel.findOne({ deviceId: deviceId })
 
             if(!result) return null
 

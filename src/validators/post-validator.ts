@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {inputValidatorMiddleware} from "../middlewares/input-validation-middleware";
-import {blogsCollection} from "../db/db";
+import {blogsModel} from "../db/db";
 import {ObjectId} from "mongodb";
 
 const titleValidator = body('title')
@@ -19,7 +19,7 @@ const blogIdValidator = body('blogId').isString().withMessage('blogId must be st
             throw new Error('incorrect blogId')
         }
 
-    const blog = await blogsCollection.findOne({_id: new ObjectId(id)})
+    const blog = await blogsModel.findOne({_id: new ObjectId(id)})
 
     if (!blog) {
         throw new Error('incorrect blogId')

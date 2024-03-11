@@ -10,8 +10,6 @@ export const rateLimitMiddleware = async (req: RequestWithBody<InputAuthModel>, 
 
     const ip = req.ip || '127.001'
 
-    console.log(req.ip, 'req.ip')
-
     // const user = await UserRepository.findByLoginOrEmail(req.body.loginOrEmail)
     //
     // console.log(user, 'usesasasas')

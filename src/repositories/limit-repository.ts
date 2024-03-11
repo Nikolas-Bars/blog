@@ -1,11 +1,4 @@
-import {PostType} from "../db/post-db";
-import {blogsCollection, postsCollection, requestHistoryCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
-import {ObjectId} from "mongodb";
-import {PostDbType} from "../models/posts/db/post-db";
-import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
-import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {RequestHistoryModel} from "../db/db";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 
 type NewPostDataType = {
@@ -19,12 +12,12 @@ export class LimitRepository {
 
     static async create(data: RequestHistoryDbType): Promise<string | null> {
         try {
-
-            const result = await requestHistoryCollection.insertOne(data)
+            // worked
+            const result = await RequestHistoryModel.insertMany([data])
 
             if (!result) return null
 
-            return result.insertedId.toString()
+            return result ? result[0]._id.toString() : null
 
         } catch (e) {
 
@@ -35,10 +28,8 @@ export class LimitRepository {
 
     static async check(data: RequestHistoryDbType): Promise<number | null> {
         try {
-            console.log(data, 'datadatadatadatadatadatadata')
-            const result = await requestHistoryCollection.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
-
-            return result
+            // worked
+            return await RequestHistoryModel.countDocuments({ip: data.ip, url: data.url, date: {$gte: data.date}})
 
         } catch (e) {
             return null

@@ -32,21 +32,6 @@ export class UserService {
         }
     }
 
-    static async updateUsersRefreshToken(userId: string, refreshToken: string) {
-        try {
-
-            return await UserRepository.updateRefreshToken(userId, refreshToken)
-
-        } catch (e) {
-
-            console.error(e)
-
-            return null
-
-        }
-
-    }
-
     static async deleteRefreshTokenByUserId(userId: string, deviceId: string, refreshToken: string) {
         try {
 

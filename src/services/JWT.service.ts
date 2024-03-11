@@ -8,7 +8,9 @@ config()
 export class JWTService {
     static async createToken(userId: string): Promise<string> {
 
-        return jwt.sign({userId: userId}, process.env.JWT_SECRET || '111111111111111111', {expiresIn: '10h'})
+        const a = jwt.sign({userId: userId}, process.env.JWT_SECRET || '111111111111111111', {expiresIn: '10h'})
+        console.log(a, 'return return ')
+        return a
 
     }
     static async createRefreshToken(userId: string, deviceId: string): Promise<string> {

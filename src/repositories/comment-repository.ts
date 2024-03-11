@@ -1,21 +1,24 @@
-import {commentsCollection} from "../db/db";
+import {CommentsModel} from "../db/db";
 import {ObjectId} from "mongodb";
+import {WithId} from "mongodb";
 import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentOutputType} from "../models/comments/output/comment-output";
+import {UpdateWriteOpResult} from "mongoose";
 
 export class CommentRepository {
 
     static async createComment(newPost: CommentInputType): Promise<string | null> {
         try {
-                const result = await commentsCollection.insertOne(
+                // worked
+                const result = await CommentsModel.insertMany([
                     {
                         commentatorInfo: newPost.commentatorInfo,
                         content: newPost.content,
                         createdAt: newPost.createdAt,
                         postId: newPost.postId
-                    })
+                    }])
 
-                return result.insertedId.toString()
+                    return result ? result[0]._id.toString() : null
 
         } catch (e) {
             return null
@@ -25,7 +28,7 @@ export class CommentRepository {
     static async updateComment(id: string, content: string): Promise<number | null> {
         try {
 
-            const result = await commentsCollection.updateOne({_id: new ObjectId(id)}, {$set: {content: content}})
+            const result: UpdateWriteOpResult = await CommentsModel.updateOne({_id: new ObjectId(id)}, {$set: {content: content}})
 
             return result.modifiedCount
 
@@ -38,8 +41,8 @@ export class CommentRepository {
 
     static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
         try {
-
-            const comment = await commentsCollection.findOne({_id: new ObjectId(commentId)})
+            // worked
+            const comment: WithId<CommentInputType> = await CommentsModel.findOne({_id: new ObjectId(commentId)})
 
             if (comment) {
                 return {
@@ -61,7 +64,8 @@ export class CommentRepository {
 
     static async deleteOneComment(id: string) {
         try {
-            const result = await commentsCollection.deleteOne({ _id: new ObjectId(id) })
+            // worked
+            const result: any = await CommentsModel.deleteOne({ _id: new ObjectId(id) })
 
             if (!result) {
                 return null

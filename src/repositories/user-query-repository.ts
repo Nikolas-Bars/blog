@@ -1,4 +1,4 @@
-import {usersCollection} from "../db/db";
+import {UsersModel} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {PaginationType} from "../models/common";
 import {QueryUserInputModel} from "../models/users/input/query.user.input.model";
@@ -16,6 +16,7 @@ export type QueryPostDataType = {
 export class UserQueryRepository {
 
     static async getUsers(params: QueryUserInputModel): Promise<PaginationType<OutputUser> | null> {
+        // worked
         try {
             const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } = params
 
@@ -42,15 +43,20 @@ export class UserQueryRepository {
                 if(searchEmailTerm) filter = {email: { $regex: searchEmailTerm, $options: 'i' }}
             }
 
-            const totalCount = await usersCollection
+            const totalCount = await UsersModel
                 .countDocuments(filter)
 
-            const users = await usersCollection
+            let sortOptions: {[key: string]: SortDirection} = {};
+
+            if (correctParams?.sortBy && correctParams?.sortDirection) {
+                sortOptions[correctParams.sortBy] = correctParams.sortDirection;
+            }
+
+            const users = await UsersModel
                 .find(filter)
                 .skip((correctParams.pageNumber - 1) * correctParams.pageSize)
                 .limit(correctParams.pageSize)
-                .sort(correctParams.sortBy, correctParams.sortDirection)
-                .toArray()
+                .sort(sortOptions)
 
             return {
                 page: correctParams.pageNumber,
@@ -79,8 +85,8 @@ export class UserQueryRepository {
 
     static async getCommentatorById(commentatorId: string): Promise<CommentatorInfo | null> {
         try {
-
-            const commentator = await usersCollection.findOne({_id: new ObjectId(commentatorId)})
+            // worked
+            const commentator = await UsersModel.findOne({_id: new ObjectId(commentatorId)})
 
             if (!commentator) {
                 return null

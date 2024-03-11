@@ -77,7 +77,7 @@ authRoute.post('/registration', rateLimitMiddleware, registrationValidator(), as
 })
 
 authRoute.post('/registration-confirmation', rateLimitMiddleware, confirmationValidator(), async (req: Request, res: Response) => {
-
+    //
     const code = req.body.code
 
     const result = await AuthService.confirmEmail(code)

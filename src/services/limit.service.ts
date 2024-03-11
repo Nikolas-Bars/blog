@@ -18,8 +18,6 @@ export class LimitService {
 
             const checked: number | null = await this.Check(data)
 
-            console.log(checked, typeof checked, 'jopa')
-
             if (typeof checked === "number" && checked + 1 > 5) return null
 
             const result: string | null = await LimitRepository.create({...data, date: dateForCompare.toString()})
