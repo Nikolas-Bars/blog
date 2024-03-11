@@ -16,7 +16,7 @@ export class BlogRepository {
                     isMembership: false,
                     createdAt: blog.createdAt
                 }])
-
+            console.log(res, 'ressss')
             return res ? res[0]._id.toString() : null
 
         } catch (e) {
