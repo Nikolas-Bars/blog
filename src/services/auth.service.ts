@@ -122,6 +122,27 @@ export class AuthService {
 
     }
 
+    static async sendRecoveryCode(email: string) {
+
+        try {
+
+            const recoveryCode = v1()
+
+            const result = await EmailManager.sendRecoveryMail(email, 'Recovery code', recoveryCode)
+
+            return result ? result : null
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+
+        }
+
+
+    }
+
     static async login(loginOrEmail: string, password: string, deviceName: string, ip?: string): Promise<{ accessToken:string, refreshToken: string } | null> {
         try {
             const user = await UserRepository.findByLoginOrEmail(loginOrEmail) as WithId<UserDbType>
