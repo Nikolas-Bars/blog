@@ -141,7 +141,7 @@ export class AuthService {
             }
         }
         // записываем нового пользователя в базу и получаем его id
-        const createdId = await UserRepository.createUser(newUser)
+        const createdId = await UserRepository.createUser(newUser as UserDbType)
         if (createdId) {
             // отправляем email на почту с кодом подтверждения
             result = await EmailManager.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
