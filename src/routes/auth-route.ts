@@ -5,7 +5,7 @@ import {AuthService} from "../services/auth.service";
 import {authValidator, confirmationValidator, resendingValidator} from "../validators/login-validator";
 import {accessTokenGuard} from "../middlewares/accessTokenGuard";
 import {
-    emailRegisterValidator,
+    emailRegisterValidator, passwordRegisterValidator,
     registrationValidator
 } from "../validators/registration-validator";
 import {refreshTokenMiddleware} from "../middlewares/refreshTokenMiddleware";
@@ -92,7 +92,7 @@ authRoute.post('/password-recovery', rateLimitMiddleware, emailRegisterValidator
 
 })
 
-authRoute.post('/new-password', rateLimitMiddleware, emailRegisterValidator(), async (req: Request, res: Response) => {
+authRoute.post('/new-password', rateLimitMiddleware, passwordRegisterValidator(), async (req: Request, res: Response) => {
 
     const recoveryCode = req.body.recoveryCode
 
