@@ -15,7 +15,7 @@ export class SecurityDevicesRepository {
             await SecurityModel.deleteMany({ip: session.ip})
 
             const a = await SecurityModel.insertMany([session])
-            console.log(a, 'aaaa')
+
             return a[0]
 
         } catch(e) {
