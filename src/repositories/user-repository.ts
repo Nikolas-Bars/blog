@@ -75,7 +75,7 @@ export class UserRepository {
     static async getUserByRecoveryCode(code: string): Promise<WithId<UserDbType> | null> {
         try {
             // worked
-            return await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
+            return await UsersModel.findOne({'emailConfirmation.recoveryCode': code})
 
         } catch (e) {
 
@@ -154,7 +154,6 @@ export class UserRepository {
             } else {
                 return null
             }
-            console.log(user, 'user checked')
 
             return user
 

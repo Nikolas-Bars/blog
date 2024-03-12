@@ -4,6 +4,7 @@ import {CreateUserInputModel} from "../models/users/input/create.user.input.mode
 import {OutputUser} from "../models/users/output/output-user";
 import {ObjectId} from "mongodb";
 import {SessionServices} from "./session.service";
+import {UserDbType} from "../models/users/db/user-db";
 
 export class UserService {
 
@@ -18,10 +19,13 @@ export class UserService {
             login: data.login,
             password: passwordHash,
             salt: salt,
-            createdAt: (new Date).toISOString()
+            createdAt: (new Date).toISOString(),
+            emailConfirmation: {
+                isConfirmed: true
+            }
         }
 
-        const newUserId: string | null = await UserRepository.createUser(newUserData)
+        const newUserId: string | null = await UserRepository.createUser(newUserData as UserDbType)
 
         if (newUserId) {
             const user: OutputUser | null = await UserRepository.getUserById(new ObjectId(newUserId))
