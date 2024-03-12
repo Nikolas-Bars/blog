@@ -18,6 +18,9 @@ const loginValidator = body('login')
 const passwordValidator = body('password')
     .isString().withMessage('password must be string type').trim().isLength({min: 6, max: 20}).withMessage('incorrect password length')
 
+const newPasswordValidator = body('newPassword')
+    .isString().withMessage('new password must be string type').trim().isLength({min: 6, max: 20}).withMessage('incorrect new password length')
+
 const emailValidator = body('email')
     .isString().withMessage('email must be string type').trim().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     .notEmpty().isEmail().withMessage('incorrect email value')
@@ -43,4 +46,8 @@ export const registrationValidator = () => {
 
 export const emailRegisterValidator =()=> {
     return [emailRecoveryValidator, inputValidatorMiddleware]
+}
+
+export const passwordRegisterValidator =()=> {
+    return [newPasswordValidator, inputValidatorMiddleware]
 }
