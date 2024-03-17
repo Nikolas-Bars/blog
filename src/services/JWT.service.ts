@@ -1,7 +1,5 @@
 import {config} from 'dotenv'
 import jwt, {JwtPayload} from 'jsonwebtoken'
-import {ObjectId} from "mongodb";
-import {UserService} from "./user.service";
 
 config()
 
@@ -16,8 +14,6 @@ export class JWTService {
     static async createRefreshToken(userId: string, deviceId: string): Promise<string> {
 
         return jwt.sign({userId: userId, deviceId: deviceId}, process.env.JWT_REFRESH_SECRET || '222222222222222222', {expiresIn: '20h'})
-
-        // await UserService.updateUsersRefreshToken(userId, newToken)
 
         // return newToken
 

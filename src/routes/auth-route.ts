@@ -9,9 +9,9 @@ import {
     registrationValidator
 } from "../validators/registration-validator";
 import {refreshTokenMiddleware} from "../middlewares/refreshTokenMiddleware";
-import {UserService} from "../services/user.service";
 import {rateLimitMiddleware} from "../middlewares/rate-limit-middleware";
 import {UserRepository} from "../repositories/user-repository";
+import {UserService} from "../composition-root";
 
 export const authRoute = express.Router()
 

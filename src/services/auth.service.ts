@@ -4,13 +4,13 @@ import {UserDbType} from "../models/users/db/user-db";
 import {UserRepository} from "../repositories/user-repository";
 import {JWTService} from "./JWT.service";
 import {RegistrationDataType} from "../models/auth/input/input-auth-model";
-import {UserService} from "./user.service";
 import {v1} from "uuid";
 import add from "date-fns/add"
 import {EmailManager} from "../manager/email-manager";
 import {SessionServices} from "./session.service";
 import {SecurityDbType} from "../models/securityDevices/securityDbType";
 import {SecurityDevicesRepository} from "../repositories/security-devices-repository";
+import {UserService} from "../composition-root";
 
 
 export class AuthService {

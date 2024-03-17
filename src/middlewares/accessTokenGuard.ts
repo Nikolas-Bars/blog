@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from 'express'
 import {JWTService} from "../services/JWT.service";
-import {UserService} from "../services/user.service";
+import {UserService} from "../composition-root";
+
 
 export const accessTokenGuard = async (req: Request, res: Response, next: NextFunction)=> {
 
