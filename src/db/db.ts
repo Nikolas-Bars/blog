@@ -8,6 +8,7 @@ import {SecurityDbType} from "../models/securityDevices/securityDbType";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 import mongoose from "mongoose";
 import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
+import {LikesDbType, LikeStatus} from "../models/likes/LikesDbType";
 
 dotenv.config()
 // указываем порт
@@ -27,12 +28,14 @@ export const usersCollection = dataBase.collection<UserDbType>('users')
 export const blogsCollection = dataBase.collection<BlogDb>('blogs')
 export const postsCollection = dataBase.collection<PostDbType>('posts')
 export const commentsCollection = dataBase.collection<CommentInputType>('comments')
-export const securityDevicesSessionCollection = dataBase.collection<SecurityDbType>('securitydevices')
-export const requestHistoryCollection = dataBase.collection<RequestHistoryDbType>('requesthistory')
-export const blackListRefreshCollection = dataBase.collection<any>('blacklistrefresh')
+export const likesCollection = dataBase.collection<WithId<LikesDbType>>('likes')
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+const likesSchema = new mongoose.Schema<WithId<LikesDbType>>({
+    commentId: "String",
+    status: "String",
+    userId: "String"
+})
 
 const usersSchema = new mongoose.Schema<UserDbType>({
     email: {type: String, required: true},
@@ -87,6 +90,8 @@ const requestHistorySchema = new mongoose.Schema<WithId<RequestHistoryDbType>>({
 });
 
 export const BlogsModel = mongoose.model('blogs', blogsSchema);
+
+export const LikesModel = mongoose.model('likes', likesSchema);
 
 export const UsersModel = mongoose.model('users', usersSchema);
 

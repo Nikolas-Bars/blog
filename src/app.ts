@@ -7,6 +7,7 @@ import {authRoute} from "./routes/auth-route";
 import {commentsRouter} from "./routes/comments-route";
 import cookieParser from "cookie-parser";
 import {securityRoute} from "./routes/security-route";
+import {likesHistoryRoute} from "./routes/likes-route";
 
 export const app = express()
 
@@ -27,6 +28,8 @@ app.use('/users', userRoute)
 app.use('/security', securityRoute)
 
 app.use('/auth', authRoute)
+
+app.use('/likes', likesHistoryRoute)
 
 app.use('/comments', commentsRouter)
 
