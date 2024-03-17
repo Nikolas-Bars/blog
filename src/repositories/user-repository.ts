@@ -10,11 +10,16 @@ export type MeDataType = {
     userId: string
 }
 
-export class UserRepository {
+type DeleteResult = {
+    deletedCount: any
+}
 
-    static async createUser(data: UserDbType): Promise<string | null> {
+export class UserRepositoryClass {
+
+    async createUser(data: UserDbType): Promise<string | null> {
         try {
             // worked
+
             const result = await UsersModel.insertMany([data])
 
             return result.length ? result[0]._id.toString() : null
@@ -28,7 +33,7 @@ export class UserRepository {
         }
     }
 
-    static async confirmEmail(id: string): Promise<boolean> {
+    async confirmEmail(id: string): Promise<boolean> {
         try {
             // worked
             const result: UpdateWriteOpResult = await UsersModel.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
@@ -43,7 +48,7 @@ export class UserRepository {
 
     }
 
-    static async updatePassword(userId: string, password: string): Promise<boolean> {
+    async updatePassword(userId: string, password: string): Promise<boolean> {
         try {
             // worked
             const result: UpdateWriteOpResult = await UsersModel.updateOne({_id: new ObjectId(userId)}, {$set: {password: password}})
@@ -58,7 +63,7 @@ export class UserRepository {
 
     }
 
-    static async getUserByConfirmCode(code: string): Promise<WithId<UserDbType> | null> {
+    async getUserByConfirmCode(code: string): Promise<WithId<UserDbType> | null> {
         try {
             // worked
             return await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
@@ -72,7 +77,7 @@ export class UserRepository {
         }
     }
 
-    static async getUserByRecoveryCode(code: string): Promise<WithId<UserDbType> | null> {
+    async getUserByRecoveryCode(code: string): Promise<WithId<UserDbType> | null> {
         try {
             // worked
             return await UsersModel.findOne({'emailConfirmation.recoveryCode': code})
@@ -86,7 +91,7 @@ export class UserRepository {
         }
     }
 
-    static async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
+    async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
         try {
             // worked
             const result: UpdateWriteOpResult = await UsersModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
@@ -100,7 +105,7 @@ export class UserRepository {
         }
     }
 
-    static async updateRecoveryCode(userId: string, code: string, newExpirationDate: Date) {
+    async updateRecoveryCode(userId: string, code: string, newExpirationDate: Date) {
         try {
             // worked
             const result: UpdateWriteOpResult = await UsersModel.updateOne({ _id: new ObjectId(userId) }, {$set: {'emailConfirmation.recoveryCode': code, 'emailConfirmation.expirationRecoveryDate': newExpirationDate}})
@@ -114,7 +119,7 @@ export class UserRepository {
         }
     }
 
-    static async meData(userId: string): Promise<MeDataType | null> {
+    async meData(userId: string): Promise<MeDataType | null> {
 
         try {
             // worked
@@ -137,10 +142,10 @@ export class UserRepository {
         }
     }
 
-    static async getUserById(id: ObjectId): Promise<OutputUser | null> {
+    async getUserById(id: ObjectId): Promise<OutputUser | null> {
         // worked
         try {
-            const result = await UsersModel.findOne({ _id: id })
+            const result: WithId<UserDbType> | null = await UsersModel.findOne({ _id: id })
 
             let user;
 
@@ -167,7 +172,7 @@ export class UserRepository {
 
     }
 
-    static async findUserByEmail(email: string): Promise<WithId<UserDbType> | null> {
+    async findUserByEmail(email: string): Promise<WithId<UserDbType> | null> {
         try {
             // worked
             const result = await UsersModel.findOne({email: email})
@@ -182,7 +187,7 @@ export class UserRepository {
 
     }
 
-    static async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbType> | null> {
+    async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbType> | null> {
         // worked
         try {
             const result = await UsersModel.findOne({
@@ -204,10 +209,10 @@ export class UserRepository {
         }
     }
 
-    static async deleteUserById(id: string): Promise<boolean> {
+    async deleteUserById(id: string): Promise<boolean> {
         // worked
         try {
-            const result = await UsersModel.deleteOne({_id: new ObjectId(id)})
+            const result: DeleteResult = await UsersModel.deleteOne({_id: new ObjectId(id)})
 
             return !!result.deletedCount
         } catch (e) {
@@ -220,3 +225,5 @@ export class UserRepository {
 
     }
 }
+
+export const UserRepository = new UserRepositoryClass()
