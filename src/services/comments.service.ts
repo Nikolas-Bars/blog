@@ -2,6 +2,7 @@ import {CommentRepository} from "../repositories/comment-repository";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {HTTP_RESPONSE_CODES} from "../models/common";
 import {LikeStatus} from "../models/likes/LikesDbType";
+import {LikeRepository} from "../repositories/like-repository";
 
 export class CommentsService {
 
@@ -39,7 +40,22 @@ export class CommentsService {
 
         try {
 
-            await CommentRepository.updateLikeStatus(commentId, currentUserId, likeStatus)
+            const like = await LikeRepository.getCommentLikeData(currentUserId, commentId)
+            let myStatus = null
+            if (like) {
+                console.log(like, 'lekelekelekeleke')
+                myStatus = like.status
+                await LikeRepository.updateLikeStatus(likeStatus, like._id.toString())
+
+            } else {
+
+                const result: boolean = await LikeRepository.createLikeStatus(likeStatus, commentId, currentUserId)
+
+            }
+
+            console.log(commentId, likeStatus, 'commentId, likeStatuscommentId, likeStatus')
+
+            await CommentRepository.updateLikeCount(commentId, likeStatus, myStatus)
 
             return true
 
