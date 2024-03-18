@@ -54,7 +54,11 @@ export class PostService {
                         userId: commentator.userId
                     },
                     createdAt: (new Date()).toISOString(),
-                    postId: postId
+                    postId: postId,
+                    likesInfo: {
+                        dislikesCount: 0,
+                        likesCount: 0
+                    }
                 }
 
                 return await CommentRepository.createComment(commentData)

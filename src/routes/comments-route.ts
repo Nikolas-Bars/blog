@@ -37,7 +37,7 @@ commentsRouter.put('/:commentId/like-status', accessTokenGuard, likeValidator(),
 
     await CommentsService.updateLikeStatus(commentId, currentUserId, likeStatus)
 
-    return res.status(204).send('GOOOOOD')
+    return res.sendStatus(204)
 
 
 })

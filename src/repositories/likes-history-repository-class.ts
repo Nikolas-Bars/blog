@@ -9,8 +9,6 @@ export class LikesHistoryRepositoryClass {
 
             // worked
 
-            console.log(like, 'like')
-
             const result = await LikesModel.insertMany([like])
 
             return result.length ? result[0]._id.toString() : null

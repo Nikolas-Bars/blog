@@ -73,6 +73,7 @@ const commentsSchema = new mongoose.Schema<CommentInputType>({
     commentatorInfo: Object,
     postId: {type: String, required: true},
     createdAt: {type: String, required: true},
+    likesInfo: Object
 });
 const securitySchema = new mongoose.Schema<SecurityDbType>({
     userId: String,

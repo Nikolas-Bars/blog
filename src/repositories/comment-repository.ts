@@ -16,7 +16,11 @@ export class CommentRepository {
                         commentatorInfo: newPost.commentatorInfo,
                         content: newPost.content,
                         createdAt: newPost.createdAt,
-                        postId: newPost.postId
+                        postId: newPost.postId,
+                        likesInfo: {
+                            dislikesCount: 0,
+                            likesCount: 0
+                        }
                     }])
 
                     return result ? result[0]._id.toString() : null
@@ -26,36 +30,66 @@ export class CommentRepository {
         }
     }
 
-    // static async updateLikeStatus(commentId: string, currentUserId: string, likeStatus: LikeStatus): Promise<number | null> {
-    //     try {
-    //
-    //         const result: UpdateWriteOpResult = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$set: {content: content}})
-    //
-    //         return result.modifiedCount
-    //
-    //     } catch (e) {
-    //         console.error(e)
-    //
-    //         return null
-    //     }
-    // }
-
-    static async updateLikeStatus(userId: string, commentId: string, likeStatus: LikeStatus): Promise<boolean> {
+    static async updateLikeCount(commentId: string, likeStatus: LikeStatus, myStatus: LikeStatus | null): Promise<boolean> {
         try {
-            // worked
-            const like: WithId<CommentInputType> | null = await LikesModel.findOne({commentId: commentId, userId: userId})
 
-            if (like) {
-                await LikesModel.updateOne({_id: like._id}, {$set: {status: likeStatus}})
-            } else {
-                await LikesModel.insertMany([{
-                    userId: userId,
-                    commentId: commentId,
-                    status: likeStatus
-                }])
+            let result: UpdateWriteOpResult;
+
+            if (likeStatus === "Like" && myStatus === "Dislike") {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+            if (likeStatus === "Dislike" && myStatus === "Like") {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1, 'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
             }
 
-            return true
+            if (likeStatus === "Like" && (myStatus === null || myStatus === "None")) {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "Dislike" && (myStatus === null || myStatus === "None")) {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Like") {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Dislike") {
+
+                result = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === null) {
+
+                return true
+
+            }
+
+            return false
+
 
         } catch (e) {
             console.error(e)
@@ -63,6 +97,20 @@ export class CommentRepository {
             return false
         }
     }
+
+    // static async updateLikeInfo(commentId: string, likeStatus: LikeStatus): Promise<boolean> {
+    //     try {
+    //         // worked
+    //         const updated = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$set: })
+    //
+    //         return true
+    //
+    //     } catch (e) {
+    //         console.error(e)
+    //
+    //         return false
+    //     }
+    // }
 
     static async updateComment(id: string, content: string): Promise<number | null> {
         try {
@@ -81,14 +129,15 @@ export class CommentRepository {
     static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
         try {
             // worked
-            const comment: WithId<CommentInputType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
+            const comment: WithId<CommentOutputType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
 
             if (comment) {
                 return {
                     id: comment._id.toString(),
                     commentatorInfo: comment.commentatorInfo,
                     content: comment.content,
-                    createdAt: comment.createdAt
+                    createdAt: comment.createdAt,
+                    likesInfo: comment.likesInfo
                 }
             } else {
                 return null

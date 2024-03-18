@@ -13,10 +13,11 @@ export type QueryPostDataType = {
 
 export class CommentsQueryRepository {
 
-    static async getCommentsForPostById(queryData: QueryPostDataType, postId: string): Promise<PaginationType<CommentOutputType> | null> {
+    static async getCommentsForPostById(queryData: QueryPostDataType, postId: string, currentUserId: string | null): Promise<PaginationType<CommentOutputType> | null> {
 
         try {
             // worked
+
             const {sortDirection, sortBy, pageSize, pageNumber} = queryData
 
             const filter = { postId: postId }
@@ -38,15 +39,19 @@ export class CommentsQueryRepository {
 
             const pagesCount = Math.ceil(totalCount / pageSize)
 
-            return {
+            const items = await Promise.all(comments.map(async (comment) => {
+                return await commentMapper(comment, currentUserId)
+            }))
+
+            const mappedComments = {
                 pagesCount: pagesCount,
                 page: pageNumber,
                 pageSize: pageSize,
                 totalCount: totalCount,
-                items: comments.map((comment) => {
-                    return commentMapper(comment)
-                })
+                items: items
             }
+
+            return mappedComments
 
 
         } catch (e) {

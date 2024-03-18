@@ -23,6 +23,7 @@ import {CommentsService} from "../services/comments.service";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {commentValidator} from "../validators/comment-validator";
 import {CommentsQueryRepository, QueryPostDataType} from "../repositories/comments-query-repository";
+import {JWTService} from "../services/JWT.service";
 
 export const postRoute = express.Router()
 
@@ -119,6 +120,20 @@ postRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<ParamType
 
 postRoute.get('/:postId/comments', async (req: Request, res: Response) => {
 
+    let currentUserId = null
+
+    if (req.headers && req.headers.authorization) {
+        const token = req.headers.authorization.split(' ')[1]
+
+        const payload: any = await JWTService.verifyToken(token)
+
+        if (payload) {
+
+            currentUserId = payload.userId
+
+        }
+    }
+
     const postId = req.params.postId
 
     const post = await PostQueryRepository.getPostById(postId)
@@ -134,9 +149,7 @@ postRoute.get('/:postId/comments', async (req: Request, res: Response) => {
         sortDirection: req.query.sortDirection ? req.query.sortDirection : 'desc'
     } as QueryPostDataType
 
-    const comments: PaginationType<CommentOutputType> | null = await CommentsQueryRepository.getCommentsForPostById(queryData, postId)
-
-
+    const comments: PaginationType<CommentOutputType> | null = await CommentsQueryRepository.getCommentsForPostById(queryData, postId, currentUserId)
 
     comments ? res.send(comments) : res.sendStatus(404)
 

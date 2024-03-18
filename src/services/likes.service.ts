@@ -10,8 +10,6 @@ export class LikesHistoryServiceClass {
     async createLike(likeData: CreateLikeInputModel): Promise<any> {
 
 
-        console.log(likeData, 'likeData')
-
         const result = await this.LikesHistoryRepository.createLike(likeData)
 
         return 'Like'
