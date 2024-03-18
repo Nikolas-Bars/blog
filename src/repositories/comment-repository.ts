@@ -88,7 +88,7 @@ export class CommentRepository {
 
             }
 
-
+            return false
 
 
         } catch (e) {

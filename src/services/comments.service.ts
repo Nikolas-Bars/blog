@@ -55,9 +55,7 @@ export class CommentsService {
 
             console.log(commentId, likeStatus, 'commentId, likeStatuscommentId, likeStatus')
 
-            await CommentRepository.updateLikeCount(commentId, likeStatus, myStatus)
-
-            return true
+            return await CommentRepository.updateLikeCount(commentId, likeStatus, myStatus)
 
         } catch (e) {
             console.error(e)
