@@ -1,6 +1,7 @@
 import {CommentRepository} from "../repositories/comment-repository";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {HTTP_RESPONSE_CODES} from "../models/common";
+import {LikeStatus} from "../models/likes/LikesDbType";
 
 export class CommentsService {
 
@@ -25,6 +26,22 @@ export class CommentsService {
             const result = await CommentRepository.updateComment(commentId, content)
 
             return !!result
+
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
+    }
+
+    static async updateLikeStatus(commentId: string, currentUserId: string, likeStatus: LikeStatus): Promise<boolean> {
+
+        try {
+
+            await CommentRepository.updateLikeStatus(commentId, currentUserId, likeStatus)
+
+            return true
 
         } catch (e) {
             console.error(e)
