@@ -5,6 +5,8 @@ import {ObjectId} from "mongodb";
 import {commentValidator} from "../validators/comment-validator";
 import {CommentRepository} from "../repositories/comment-repository";
 import {CommentOutputType} from "../models/comments/output/comment-output";
+import {LikeStatus} from "../models/likes/LikesDbType";
+import {likeValidator} from "../validators/like-validator";
 
 export const commentsRouter = express.Router()
 
@@ -19,6 +21,25 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
     } else {
         return res.status(200).send(result)
     }
+})
+
+commentsRouter.put('/:commentId/like-status', accessTokenGuard, likeValidator(), async (req: Request, res: Response)=> {
+
+    const commentId = req.params.commentId
+
+    const likeStatus: LikeStatus = req.body.likeStatus
+
+    const currentUserId = req.userId
+
+    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId)
+
+    if (!comment) return res.sendStatus(404)
+
+    await CommentsService.updateLikeStatus(commentId, currentUserId, likeStatus)
+
+    return res.status(204).send('GOOOOOD')
+
+
 })
 
 commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (req: Request, res: Response) => {

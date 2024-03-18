@@ -1,9 +1,10 @@
-import {CommentsModel} from "../db/db";
+import {CommentsModel, LikesModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {WithId} from "mongodb";
 import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {UpdateWriteOpResult} from "mongoose";
+import {LikeStatus} from "../models/likes/LikesDbType";
 
 export class CommentRepository {
 
@@ -22,6 +23,44 @@ export class CommentRepository {
 
         } catch (e) {
             return null
+        }
+    }
+
+    // static async updateLikeStatus(commentId: string, currentUserId: string, likeStatus: LikeStatus): Promise<number | null> {
+    //     try {
+    //
+    //         const result: UpdateWriteOpResult = await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {$set: {content: content}})
+    //
+    //         return result.modifiedCount
+    //
+    //     } catch (e) {
+    //         console.error(e)
+    //
+    //         return null
+    //     }
+    // }
+
+    static async updateLikeStatus(userId: string, commentId: string, likeStatus: LikeStatus): Promise<boolean> {
+        try {
+            // worked
+            const like: WithId<CommentInputType> | null = await LikesModel.findOne({commentId: commentId, userId: userId})
+
+            if (like) {
+                await LikesModel.updateOne({_id: like._id}, {$set: {status: likeStatus}})
+            } else {
+                await LikesModel.insertMany([{
+                    userId: userId,
+                    commentId: commentId,
+                    status: likeStatus
+                }])
+            }
+
+            return true
+
+        } catch (e) {
+            console.error(e)
+
+            return false
         }
     }
 
