@@ -7,14 +7,29 @@ import {CommentRepository} from "../repositories/comment-repository";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {LikeStatus} from "../models/likes/LikesDbType";
 import {likeValidator} from "../validators/like-validator";
+import {JWTService} from "../services/JWT.service";
 
 export const commentsRouter = express.Router()
 
 commentsRouter.get('/:commentId', async (req: Request, res: Response)=> {
 
+    let currentUserId = null
+
+    if (req.headers && req.headers.authorization) {
+        const token = req.headers.authorization.split(' ')[1]
+
+        const payload: any = await JWTService.verifyToken(token)
+
+        if (payload) {
+
+            currentUserId = payload.userId
+
+        }
+    }
+
     const id = req.params.commentId
 
-    const result = await CommentsService.getCommentById(id)
+    const result = await CommentsService.getCommentById(id, currentUserId)
 
     if(!result) {
         return res.sendStatus(404)
