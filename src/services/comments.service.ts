@@ -6,10 +6,10 @@ import {LikeRepository} from "../repositories/like-repository";
 
 export class CommentsService {
 
-    static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
+    static async getCommentById(commentId: string, currentUserId?: string | null): Promise<CommentOutputType | null> {
         try {
 
-            return await CommentRepository.getCommentById(commentId)
+            return await CommentRepository.getCommentById(commentId, currentUserId)
 
         } catch (e) {
 
