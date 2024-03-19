@@ -43,15 +43,13 @@ export class CommentsQueryRepository {
                 return await commentMapper(comment, currentUserId)
             }))
 
-            const mappedComments = {
+            return {
                 pagesCount: pagesCount,
                 page: pageNumber,
                 pageSize: pageSize,
                 totalCount: totalCount,
                 items: items
             }
-
-            return mappedComments
 
 
         } catch (e) {

@@ -5,6 +5,7 @@ import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {UpdateWriteOpResult} from "mongoose";
 import {LikeStatus} from "../models/likes/LikesDbType";
+import {LikeRepository} from "./like-repository";
 
 export class CommentRepository {
 
@@ -126,18 +127,28 @@ export class CommentRepository {
         }
     }
 
-    static async getCommentById(commentId: string): Promise<CommentOutputType | null> {
+    static async getCommentById(commentId: string, currentUserId?: string): Promise<CommentOutputType | null> {
         try {
             // worked
             const comment: WithId<CommentOutputType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
 
             if (comment) {
+
+                let myStatus: LikeStatus = 'None'
+
+                if (currentUserId) {
+                    myStatus = await LikeRepository.getMyStatusForComment(comment._id.toString(), currentUserId)
+                }
                 return {
                     id: comment._id.toString(),
                     commentatorInfo: comment.commentatorInfo,
                     content: comment.content,
                     createdAt: comment.createdAt,
-                    likesInfo: comment.likesInfo
+                    likesInfo: {
+                        dislikesCount: comment.likesInfo.dislikesCount,
+                        likesCount: comment.likesInfo.likesCount,
+                        myStatus: myStatus
+                    }
                 }
             } else {
                 return null

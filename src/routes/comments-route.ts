@@ -31,7 +31,7 @@ commentsRouter.put('/:commentId/like-status', accessTokenGuard, likeValidator(),
 
     const currentUserId = req.userId
 
-    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId)
+    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId, req.userId)
 
     if (!comment) return res.sendStatus(404)
 
@@ -48,7 +48,7 @@ commentsRouter.put('/:commentId', accessTokenGuard, commentValidator(), async (r
 
     const commentId = req.params.commentId
 
-    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId)
+    const comment: CommentOutputType | null = await CommentRepository.getCommentById(commentId, req.userId)
 
     if (comment && comment.commentatorInfo.userId !== req.userId) {
         return res.sendStatus(403)
