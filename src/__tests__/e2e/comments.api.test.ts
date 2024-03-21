@@ -1,11 +1,18 @@
 import {app} from "../../app";
 import request from 'supertest'
+import mongoose from "mongoose";
 
 describe('comments', () => {
 
+    const mongoURI = 'mongodb://localhost:27017/'
+
     beforeAll(async () => {
+
+        await mongoose.connect(mongoURI)
+
         await request(app)
             .delete('/testing/all-data')
+
     })
 
     it('should be create new blog, post, and loginIn', async () => {
@@ -102,6 +109,11 @@ describe('comments', () => {
                     userId: expect.any(String),
                     userLogin: 'comment'
                 },
+                likesInfo: {
+                    dislikesCount: 0,
+                    likesCount: 0,
+                    myStatus: "None"
+                },
                 createdAt: expect.any(String)
             })
 
@@ -123,6 +135,11 @@ describe('comments', () => {
             commentatorInfo: {
                 userId: expect.any(String),
                 userLogin: 'comment'
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+                myStatus: "None"
             },
             createdAt: expect.any(String)
         })
