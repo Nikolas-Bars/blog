@@ -4,7 +4,8 @@ import {ObjectId} from "mongodb";
 import {PostDbType} from "../models/posts/db/post-db";
 import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
 import {UpdateWriteOpResult} from "mongoose";
-import {PostsModel} from "../db/db";
+import {CommentsModel, LikesModel, LikesPostModel, PostsModel} from "../db/db";
+import {LikesDbType, LikeStatus} from "../models/likes/LikesDbType";
 
 type NewPostDataType = {
     title: string,
@@ -15,7 +16,7 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
+    static async getPostById(postId: string, currentUserId: string | null): Promise<OutputPostModel | boolean> {
         try {
             // worked
             const post = await PostsModel.findOne({_id: new ObjectId(postId)})
@@ -24,7 +25,7 @@ export class PostRepository {
                 return false
             }
 
-            return postMapper(post)
+            return postMapper(post, currentUserId)
 
         }  catch (e) {
             return false
@@ -90,6 +91,88 @@ export class PostRepository {
             return true
 
         } catch (e) {
+            return false
+        }
+    }
+
+    static async getMyStatusForPost(commentId: string, userId: string): Promise<LikeStatus> {
+        try {
+            const like: LikesDbType | null = await LikesPostModel.findOne({commentId: commentId, userId: userId})
+
+            if (!like) return 'None'
+
+            return like.status
+
+        } catch (e) {
+            console.error(e)
+            return 'None'
+        }
+    }
+
+    static async updateLikeCountOfPost(commentId: string, likeStatus: LikeStatus, myStatus: LikeStatus | null): Promise<boolean> {
+        try {
+
+            let result: UpdateWriteOpResult;
+
+            if (likeStatus === "Like" && myStatus === "Dislike") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+            if (likeStatus === "Dislike" && myStatus === "Like") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1, 'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "Like" && (myStatus === null || myStatus === "None")) {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "Dislike" && (myStatus === null || myStatus === "None")) {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Like") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Dislike") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === null) {
+
+                return true
+
+            }
+
+            return false
+
+
+        } catch (e) {
+            console.error(e)
+
             return false
         }
     }

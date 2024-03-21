@@ -8,7 +8,7 @@ import {SecurityDbType} from "../models/securityDevices/securityDbType";
 import {RequestHistoryDbType} from "../models/requestHistory/requestHistoryDbType";
 import mongoose from "mongoose";
 import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
-import {LikesDbType, LikeStatus} from "../models/likes/LikesDbType";
+import {LikesDbType, LikesPostDbType, LikeStatus} from "../models/likes/LikesDbType";
 
 dotenv.config()
 // указываем порт
@@ -35,6 +35,14 @@ const likesSchema = new mongoose.Schema<WithId<LikesDbType>>({
     commentId: "String",
     status: "String",
     userId: "String"
+})
+
+const likesPostSchema = new mongoose.Schema<WithId<LikesPostDbType>>({
+    postId: "String",
+    status: "String",
+    login: "String",
+    userId: "String",
+    updated: "Date",
 })
 
 const usersSchema = new mongoose.Schema<UserDbType>({
@@ -67,6 +75,7 @@ const postsSchema = new mongoose.Schema<PostDbType>({
     blogId: {type: String, required: true},
     blogName: {type: String, required: true},
     createdAt: {type: String, required: true},
+    extendedLikesInfo: Object
 });
 const commentsSchema = new mongoose.Schema<CommentInputType>({
     content: {type: String, required: true},
@@ -93,6 +102,8 @@ const requestHistorySchema = new mongoose.Schema<WithId<RequestHistoryDbType>>({
 export const BlogsModel = mongoose.model('blogs', blogsSchema);
 
 export const LikesModel = mongoose.model('likes', likesSchema);
+
+export const LikesPostModel = mongoose.model('likesposts', likesPostSchema);
 
 export const UsersModel = mongoose.model('users', usersSchema);
 
