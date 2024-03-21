@@ -1,37 +1,38 @@
-import {MongoMemoryServer} from 'mongodb-memory-server'
 import dotenv from "dotenv";
 import {AuthService} from "../../services/auth.service";
 import {testSeeder} from "../test.seeder";
 import {emailAdapter} from "../../adapter/email-adapter";
-import {emailServiceMock} from "../mocs";
-import {blogsCollection, commentsCollection, postsCollection, usersCollection} from "../../db/db";
+import mongoose from 'mongoose'
+import {BlogsModel, CommentsModel, PostsModel, UsersModel} from "../../db/db";
 
 dotenv.config()
 
 
 describe('AUTH-INTEGRATION', () => {
 
+    const mongoURI = 'mongodb://localhost:27017/'
+
     beforeAll(async () => {
 
-        const mongoServer = await MongoMemoryServer.create()
-        process.env.MONGO_URI = mongoServer.getUri()
+        await mongoose.connect(mongoURI)
 
+    })
+
+    afterAll(async () => {
+        /* Closing database connection after each test. */
+        await mongoose.connection.close()
     })
 
     beforeEach(async ()=> {
-        await blogsCollection.deleteMany({})
 
-        await postsCollection.deleteMany({})
+        await BlogsModel.deleteMany({})
 
-        await usersCollection.deleteMany({})
+        await PostsModel.deleteMany({})
 
-        await commentsCollection.deleteMany({})
+        await UsersModel.deleteMany({})
+
+        await CommentsModel.deleteMany({})
     })
-    //
-    // afterAll(async () => {
-    //     await db.drop()
-    //     await db.stop()
-    // })
 
     describe('User Registration', () => {
         const registerUser = AuthService.registerUser

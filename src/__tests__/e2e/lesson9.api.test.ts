@@ -1,36 +1,47 @@
 import request from "supertest";
 import {app} from "../../app";
+import mongoose from "mongoose";
 
 describe('/users', () => {
 
+    const mongoURI = 'mongodb://localhost:27017/'
+
+    beforeAll(async () => {
+
+        await mongoose.connect(mongoURI)
+
+        await request(app)
+            .delete('/testing/all-data')
+
+    })
     // beforeAll(async () => {
     //     await request(app)
     //         .delete('/testing/all-data')
     // })
 
-    // it('should be created new user', async () => {
-    //
-    //     const data = {
-    //         login: "Looser",
-    //         password: "string",
-    //         email: "dd@gmail.ru"
-    //     }
-    //
-    //     const result = await request(app)
-    //         .post('/users')
-    //         .auth('admin', 'qwerty')
-    //         .send(data)
-    //         .expect(201)
-    //
-    //     expect(result.body).toEqual({
-    //         id: expect.any(String),
-    //         login: "Looser",
-    //         email: 'dd@gmail.ru',
-    //         createdAt: expect.any(String)
-    //     })
-    //
-    //     expect.setState({ id: result.body.id })
-    // })
+    it('should be created new user', async () => {
+
+        const data = {
+            login: "Looser",
+            password: "string",
+            email: "dd@gmail.ru"
+        }
+
+        const result = await request(app)
+            .post('/users')
+            .auth('admin', 'qwerty')
+            .send(data)
+            .expect(201)
+
+        expect(result.body).toEqual({
+            id: expect.any(String),
+            login: "Looser",
+            email: 'dd@gmail.ru',
+            createdAt: expect.any(String)
+        })
+
+        expect.setState({ id: result.body.id })
+    })
 
     it('should be login 4 times with different user agent', async () => {
 
@@ -114,13 +125,15 @@ describe('/users', () => {
             accessToken: expect.any(String)
         })
 
-        expect.setState({ token: refreshResult.body.accessToken })
+        let newRefreshToken = refreshResult.headers['set-cookie'][0].split('=')[1]
 
-        const { token } = expect.getState()
+        expect.setState({ token: refreshResult.body.accessToken, refreshToken: newRefreshToken })
+
+        const { token, refreshToken } = expect.getState()
 
         const get4Section = await request(app)
             .get('/security/devices')
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .expect(200)
 
         expect(get4Section.body).toHaveLength(4);
@@ -132,14 +145,14 @@ describe('/users', () => {
 
         //////////////////////////////////////////////////
 
-        await request(app)
+        await request(app) // Удаляем девайс 2 (передаем refreshToken девайса 1)
             .delete(`/security/devices/${session2Data.deviceId}`)
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .expect(204)
 
-        const get3Sections = await request(app)
+        const get3Sections = await request(app) // Запрашиваем список девайсов. Проверяем, что девайс 2 отсутствует в списке;
             .get('/security/devices')
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .set('User-Agent', `Browser1`)
             .set('x-forwarded-for', `::111:111`)
             .expect(200)
@@ -148,32 +161,32 @@ describe('/users', () => {
 
         //////////////////////////////////////////////////// Делаем logout девайсом 3. Запрашиваем список девайсов (девайсом 1).  В списке не должно быть девайса 3;
 
-        await request(app)
+        await request(app) // Делаем logout девайсом 3.
             .post('/auth/logout')
             .set('Cookie', `refreshToken=${refreshToken3}`)
             .set('User-Agent', `Browser3`)
             .set('x-forwarded-for', `::111:333`)
             .expect(204)
 
-        const get2Sections = await request(app)
+        const get2Sections = await request(app) // Запрашиваем список девайсов (девайсом 1).  В списке не должно быть девайса 3;
             .get('/security/devices')
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .set('User-Agent', `Browser1`)
             .set('x-forwarded-for', `::111:111`)
             .expect(200)
 
        expect(get2Sections.body).toHaveLength(2);
 
-        //////////////////////////////////////////////////////// Удаляем все оставшиеся девайсы (девайсом 1).  Запрашиваем список девайсов. В списке должен содержаться только один (текущий) девайс;
+        //////////////////////////////////////////////////////// Удаляем все оставшиеся девайсы (девайсом 1).
 
         await request(app)
             .delete(`/security/devices/${session4Data.deviceId}`)
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .expect(204)
 
-        const get1Sections = await request(app)
+        const get1Sections = await request(app) // Запрашиваем список девайсов. В списке должен содержаться только один (текущий) девайс;
             .get('/security/devices')
-            .set('authorization', `Bearer ${token}`)
+            .set('Cookie', `refreshToken=${refreshToken}`)
             .set('User-Agent', `Browser1`)
             .set('x-forwarded-for', `::111:111`)
             .expect(200)
