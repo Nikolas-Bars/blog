@@ -81,7 +81,7 @@ export class BlogQueryRepository {
         }
     }
 
-    static async getPostsByBlogId(blogId: string, queryData: QueryParamsForPostsByBlogId): Promise<PaginationType<OutputPostModel> | null> {
+    static async getPostsByBlogId(blogId: string, queryData: QueryParamsForPostsByBlogId, currentUserId: null | string): Promise<PaginationType<OutputPostModel> | null> {
         try {
             // worked
             const {pageNumber, pageSize, sortBy, sortDirection} = queryData
@@ -104,14 +104,16 @@ export class BlogQueryRepository {
             const pagesCount = Math.ceil(totalCount / pageSize)
 
             if (posts.length) {
+                const items = await Promise.all(posts.map(async (post) => {
+                    return postMapper(post, currentUserId);
+                }))
+
                 return {
                     pagesCount: pagesCount,
                     page: pageNumber,
                     pageSize: pageSize,
                     totalCount: totalCount,
-                    items: posts.map((post) => {
-                        return postMapper(post)
-                    })
+                    items: items
                 }
             } else {
                 return null

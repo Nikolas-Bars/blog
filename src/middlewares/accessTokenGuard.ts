@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from 'express'
 import {JWTService} from "../services/JWT.service";
 import {UserService} from "../composition-root";
+import {OutputUser} from "../models/users/output/output-user";
 
 
 export const accessTokenGuard = async (req: Request, res: Response, next: NextFunction)=> {
@@ -15,10 +16,10 @@ export const accessTokenGuard = async (req: Request, res: Response, next: NextFu
 
         const userId = payload.userId
 
-        const user: boolean = await UserService.doesExistsById(userId)
+        const user: OutputUser | null = await UserService.doesExistsById(userId)
 
         if (!user) return res.sendStatus(401)
-
+        req.login = user.login
         req.userId = userId
 
         return next()
@@ -40,7 +41,7 @@ export const refreshTokenGuard = async (req: Request, res: Response, next: NextF
 
         const userId = payload.userId
 
-        const user: boolean = await UserService.doesExistsById(userId)
+        const user: OutputUser | null = await UserService.doesExistsById(userId)
 
         if (!user) return res.sendStatus(401)
 

@@ -8,6 +8,8 @@ import {UserQueryRepository} from "../repositories/user-query-repository";
 import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
 import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentRepository} from "../repositories/comment-repository";
+import {LikeStatus} from "../models/likes/LikesDbType";
+import {LikeRepository} from "../repositories/like-repository";
 
 export class PostService {
     static async createPost(data: CreatePostInputModel): Promise<string | null> {
@@ -26,7 +28,13 @@ export class PostService {
             title: data.title,
             shortDescription: data.shortDescription,
             createdAt,
-            blogName: blog.name
+            blogName: blog.name,
+            extendedLikesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+                myStatus: 'None',
+                newestLikes: []
+            },
         })
     }
 
@@ -36,9 +44,40 @@ export class PostService {
 
     }
 
-    static async createCommentForPost(postId: string, userId: string, commentatorId: string, content: string): Promise<string | null> {
+    static async updateLikeStatusOfPost(commentId: string, currentUserId: string, likeStatus: LikeStatus, login: string): Promise<boolean> {
         try {
-            const post: OutputPostModel | null = await PostQueryRepository.getPostById(postId)
+
+            const like = await LikeRepository.getPostLikeDataOfPost(currentUserId, commentId)
+
+            let myStatus = null
+
+            if (like) {
+
+                console.log(like, 'статус найден')
+
+                myStatus = like.status
+
+                await LikeRepository.updateLikeStatusOfPost(likeStatus, like._id.toString())
+
+            } else {
+
+                const result: boolean = await LikeRepository.createLikeStatusOfPost(likeStatus, commentId, currentUserId, login)
+
+            }
+
+            return await PostRepository.updateLikeCountOfPost(commentId, likeStatus, myStatus)
+
+        } catch (e) {
+            console.error(e)
+
+            return false
+        }
+
+    }
+
+    static async createCommentForPost(postId: string, userId: string, commentatorId: string, content: string, currentUserId: string): Promise<string | null> {
+        try {
+            const post: OutputPostModel | null = await PostQueryRepository.getPostById(postId, currentUserId)
 
             if (!post) {
                 return null

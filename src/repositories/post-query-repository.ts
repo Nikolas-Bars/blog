@@ -3,6 +3,7 @@ import {postMapper} from "../models/posts/mappers/post-mapper";
 import {OutputPostModel} from "../models/posts/output/output-post";
 import {ObjectId, SortDirection} from "mongodb";
 import {PaginationType} from "../models/common";
+import {commentMapper} from "../models/comments/mappers/post-mapper";
 
 type NewPostDataType = {
     title: string,
@@ -20,7 +21,7 @@ export type QueryPostDataType = {
 
 export class PostQueryRepository {
 
-    static async getAll(queryData: QueryPostDataType): Promise<PaginationType<OutputPostModel> | null> {
+    static async getAll(queryData: QueryPostDataType, currentUserId: string | null): Promise<PaginationType<OutputPostModel> | null> {
 
         try {
             // worked
@@ -45,14 +46,16 @@ export class PostQueryRepository {
 
             const pagesCount = Math.ceil(totalCount / pageSize)
 
+            const items = await Promise.all(posts.map(async (post) => {
+                return postMapper(post, currentUserId);
+            }))
+
             return {
                 pagesCount: pagesCount,
                 page: pageNumber,
                 pageSize: pageSize,
                 totalCount: totalCount,
-                items: posts.map((post) => {
-                    return postMapper(post)
-                })
+                items: items
             }
 
 
@@ -62,7 +65,7 @@ export class PostQueryRepository {
 
     }
 
-    static async getPostById(postId: string): Promise<OutputPostModel | null> {
+    static async getPostById(postId: string, currentUserId: string | null): Promise<OutputPostModel | null> {
         try {
 
             const post = await PostsModel.findOne({_id: new ObjectId(postId)})
@@ -71,7 +74,7 @@ export class PostQueryRepository {
                 return null
             }
 
-            return postMapper(post)
+            return postMapper(post, currentUserId)
 
         }  catch (e) {
             return null

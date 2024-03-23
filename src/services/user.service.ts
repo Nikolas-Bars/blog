@@ -53,11 +53,15 @@ export class UserServiceClass {
         }
     }
 
-    async doesExistsById(id: string): Promise<boolean> {
+    async doesExistsById(id: string): Promise<null | OutputUser> {
 
-        const user = await this.UserRepository.getUserById(new ObjectId(id))
+        const user: OutputUser | null = await this.UserRepository.getUserById(new ObjectId(id))
 
-        return !!user
+        if(user) {
+            return user
+        }
+
+        return null
     }
     async _generateHash(password: string, salt: string) {
 
