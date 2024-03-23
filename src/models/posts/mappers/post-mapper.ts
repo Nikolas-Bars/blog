@@ -8,6 +8,8 @@ import {LikesPostDbType} from "../../likes/LikesDbType";
 
 export const postMapper = async (post: WithId<PostDbType>, currentUserId: string | null): Promise<OutputPostModel> => {
 
+    console.log(currentUserId,'currentUserId')
+
     const myStatus = currentUserId ? await PostRepository.getMyStatusForPost(post._id.toString(), currentUserId) : "None"
 
     const new3Likes: LikesPostDbType[] | null = await LikeRepository.getLatest3LikesOfPost(post._id.toString())

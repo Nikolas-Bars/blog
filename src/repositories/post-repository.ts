@@ -95,10 +95,10 @@ export class PostRepository {
         }
     }
 
-    static async getMyStatusForPost(commentId: string, userId: string): Promise<LikeStatus> {
+    static async getMyStatusForPost(postId: string, userId: string): Promise<LikeStatus> {
         try {
-            const like: LikesDbType | null = await LikesPostModel.findOne({commentId: commentId, userId: userId})
-
+            const like: LikesDbType | null = await LikesPostModel.findOne({postId: postId, userId: userId})
+            console.log(postId, userId)
             if (!like) return 'None'
 
             return like.status
