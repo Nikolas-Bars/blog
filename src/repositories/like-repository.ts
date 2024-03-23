@@ -93,7 +93,7 @@ export class LikeRepository {
                 .sort({ updated: -1 }) // Сортируем по дате обновления в обратном порядке
                 .limit(3); // Получаем только три последних лайка
 
-            return likes ? likes : []
+            return likes ? likes : null
 
         } catch(e) {
 
