@@ -87,7 +87,7 @@ export class LikeRepository {
         }
     }
 
-    static async getLatest3LikesOfPost(postId: string): Promise<NewestLikesType[] | null> {
+    static async getLatest3LikesOfPost(postId: string): Promise<LikesPostDbType[] | null> {
         try {
             const likes = await LikesPostModel.find({ postId, status: "Like" })
                 .sort({ updated: -1 }) // Сортируем по дате обновления в обратном порядке
