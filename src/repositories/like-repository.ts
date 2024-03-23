@@ -5,6 +5,7 @@ import {CommentInputType} from "../models/comments/input/comment-input";
 import {CommentOutputType} from "../models/comments/output/comment-output";
 import {UpdateWriteOpResult} from "mongoose";
 import {LikesDbType, LikesPostDbType, LikeStatus} from "../models/likes/LikesDbType";
+import {NewestLikesType} from "../models/posts/output/output-post";
 
 export class LikeRepository {
 
@@ -86,16 +87,13 @@ export class LikeRepository {
         }
     }
 
-    static async getLatest3LikesOfPost(postId: string) {
+    static async getLatest3LikesOfPost(postId: string): Promise<NewestLikesType[] | null> {
         try {
-            console.log(postId)
-            const likes = await LikesPostModel.find({ postId, status: "None" })
+            const likes = await LikesPostModel.find({ postId, status: "Like" })
                 .sort({ updated: -1 }) // Сортируем по дате обновления в обратном порядке
                 .limit(3); // Получаем только три последних лайка
 
-            console.log(likes, ['ewewew'])
-
-            return likes ? likes : null
+            return likes ? likes : []
 
         } catch(e) {
 
