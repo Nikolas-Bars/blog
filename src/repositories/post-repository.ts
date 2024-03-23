@@ -1,11 +1,11 @@
-import {PostType} from "../db/post-db";
-import {blogsCollection, postsCollection} from "../db/db";
 import {postMapper} from "../models/posts/mappers/post-mapper";
 import {OutputPostModel} from "../models/posts/output/output-post";
 import {ObjectId} from "mongodb";
 import {PostDbType} from "../models/posts/db/post-db";
-import {CreatePostInputModel} from "../models/posts/input/create.post.input.model";
 import {UpdatePostInputModel} from "../models/posts/input/update.post.input.model";
+import {UpdateWriteOpResult} from "mongoose";
+import {CommentsModel, LikesModel, LikesPostModel, PostsModel} from "../db/db";
+import {LikesDbType, LikeStatus} from "../models/likes/LikesDbType";
 
 type NewPostDataType = {
     title: string,
@@ -16,32 +16,16 @@ type NewPostDataType = {
 
 export class PostRepository {
 
-    // static async getAll(): Promise<OutputPostModel[] | false> {
-    //
-    //     try {
-    //
-    //         const posts = await postsCollection.find({}).toArray()
-    //
-    //         return posts.map((post) => {
-    //             return postMapper(post)
-    //         })
-    //
-    //     } catch (e) {
-    //         return false
-    //     }
-    //
-    // }
-
-    static async getPostById(postId: string): Promise<OutputPostModel | boolean> {
+    static async getPostById(postId: string, currentUserId: string | null): Promise<OutputPostModel | boolean> {
         try {
-
-            const post = await postsCollection.findOne({_id: new ObjectId(postId)})
+            // worked
+            const post = await PostsModel.findOne({_id: new ObjectId(postId)})
 
             if(!post) {
                 return false
             }
 
-            return postMapper(post)
+            return postMapper(post, currentUserId)
 
         }  catch (e) {
             return false
@@ -50,13 +34,14 @@ export class PostRepository {
 
     static async createPost(newPost: PostDbType): Promise<string | null> {
         try {
-                const result = await postsCollection.insertOne(
+                // worked
+                const res = await PostsModel.insertMany([
                     {
                         ...newPost,
                         blogName: newPost.blogName
-                    })
+                    }])
 
-                return result.insertedId.toString()
+                    return res ? res[0]._id.toString() : null
 
         } catch (e) {
             return null
@@ -66,8 +51,8 @@ export class PostRepository {
     static async updatePost(id: string, body: UpdatePostInputModel): Promise<boolean> {
 
         try {
-
-            const result = await postsCollection.updateOne(
+            // worked
+            const result: UpdateWriteOpResult = await PostsModel.updateOne(
                 {_id: new ObjectId(id)},
                 {$set:
                         {
@@ -88,7 +73,8 @@ export class PostRepository {
 
     static async deletePost(postId: string): Promise<boolean> {
         try {
-            const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
+            // worked
+            const result: any = await PostsModel.deleteOne({_id: new ObjectId(postId)})
 
             return !!result.deletedCount
 
@@ -99,13 +85,94 @@ export class PostRepository {
 
     static async deletePostsByBlogId(blogId: string): Promise<boolean> {
         try {
-            const result = await postsCollection.deleteMany({ blogId: blogId })
+            // worked
+            await PostsModel.deleteMany({ blogId: blogId })
 
-            console.log(result.deletedCount, 'result')
-
-            return !!result.deletedCount
+            return true
 
         } catch (e) {
+            return false
+        }
+    }
+
+    static async getMyStatusForPost(commentId: string, userId: string): Promise<LikeStatus> {
+        try {
+            const like: LikesDbType | null = await LikesPostModel.findOne({commentId: commentId, userId: userId})
+
+            if (!like) return 'None'
+
+            return like.status
+
+        } catch (e) {
+            console.error(e)
+            return 'None'
+        }
+    }
+
+    static async updateLikeCountOfPost(commentId: string, likeStatus: LikeStatus, myStatus: LikeStatus | null): Promise<boolean> {
+        try {
+
+            let result: UpdateWriteOpResult;
+
+            if (likeStatus === "Like" && myStatus === "Dislike") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+            if (likeStatus === "Dislike" && myStatus === "Like") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1, 'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "Like" && (myStatus === null || myStatus === "None")) {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "Dislike" && (myStatus === null || myStatus === "None")) {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Like") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === "Dislike") {
+
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': -1}})
+
+                return !!result.modifiedCount
+
+            }
+
+            if (likeStatus === "None" && myStatus === null) {
+
+                return true
+
+            }
+
+            return false
+
+
+        } catch (e) {
+            console.error(e)
+
             return false
         }
     }

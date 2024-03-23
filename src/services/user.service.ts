@@ -1,13 +1,16 @@
-import {UserRepository} from "../repositories/user-repository";
+import {UserRepository, UserRepositoryClass} from "../repositories/user-repository";
 import bcrypt from "bcrypt";
 import {CreateUserInputModel} from "../models/users/input/create.user.input.model";
 import {OutputUser} from "../models/users/output/output-user";
 import {ObjectId} from "mongodb";
+import {SessionServices} from "./session.service";
 import {UserDbType} from "../models/users/db/user-db";
 
-export class UserService {
+export class UserServiceClass {
 
-    static async createUser(data: CreateUserInputModel): Promise<OutputUser | null> {
+    constructor(protected UserRepository: UserRepositoryClass) {} // UserRepository создадим в composition-root
+
+    async createUser(data: CreateUserInputModel): Promise<OutputUser | null> {
 
         const salt = await bcrypt.genSalt(10)
 
@@ -18,13 +21,16 @@ export class UserService {
             login: data.login,
             password: passwordHash,
             salt: salt,
-            createdAt: (new Date).toISOString()
+            createdAt: (new Date).toISOString(),
+            emailConfirmation: {
+                isConfirmed: true
+            }
         }
 
-        const newUserId: string | null = await UserRepository.createUser(newUserData)
+        const newUserId: string | null = await this.UserRepository.createUser(newUserData as UserDbType)
 
         if (newUserId) {
-            const user: OutputUser | null = await UserRepository.getUserById(new ObjectId(newUserId))
+            const user: OutputUser | null = await this.UserRepository.getUserById(new ObjectId(newUserId))
 
             return user ? user : null
         } else {
@@ -32,29 +38,40 @@ export class UserService {
         }
     }
 
-    static async deleteUser(id: string): Promise<boolean> {
+    async deleteRefreshTokenByUserId(userId: string, deviceId: string, refreshToken: string) {
+        try {
 
-        return await UserRepository.deleteUserById(id)
+            // теперь удаляем только сессию так как ни black листа ни отдельной таблицы под RefreshToken нет
+            return await SessionServices.deleteOneSessions(deviceId)
 
+            // return await UserRepository.deleteRefreshToken(userId, refreshToken)
+
+        } catch (e) {
+            console.error(e)
+
+            return null
+        }
     }
 
-    static async _generateHash(password: string, salt: string) {
+    async doesExistsById(id: string): Promise<null | OutputUser> {
+
+        const user: OutputUser | null = await this.UserRepository.getUserById(new ObjectId(id))
+
+        if(user) {
+            return user
+        }
+
+        return null
+    }
+    async _generateHash(password: string, salt: string) {
 
         return await bcrypt.hash(password, salt)
 
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
+    async deleteUser(id: string): Promise<boolean> {
 
-        const user: UserDbType | null = await UserRepository.findByLoginOrEmail(loginOrEmail)
-
-        if (!user) {
-            return false
-        }
-
-        const passwordHash = await this._generateHash(password, user.salt)
-
-        return passwordHash === user.password;
+        return await this.UserRepository.deleteUserById(id)
 
     }
 }

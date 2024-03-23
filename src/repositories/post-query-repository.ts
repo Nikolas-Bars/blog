@@ -1,8 +1,9 @@
-import {postsCollection} from "../db/db";
+import {PostsModel} from "../db/db";
 import {postMapper} from "../models/posts/mappers/post-mapper";
 import {OutputPostModel} from "../models/posts/output/output-post";
 import {ObjectId, SortDirection} from "mongodb";
 import {PaginationType} from "../models/common";
+import {commentMapper} from "../models/comments/mappers/post-mapper";
 
 type NewPostDataType = {
     title: string,
@@ -20,34 +21,41 @@ export type QueryPostDataType = {
 
 export class PostQueryRepository {
 
-    static async getAll(queryData: QueryPostDataType): Promise<PaginationType<OutputPostModel> | null> {
+    static async getAll(queryData: QueryPostDataType, currentUserId: string | null): Promise<PaginationType<OutputPostModel> | null> {
 
         try {
-
+            // worked
             const {sortDirection, sortBy, pageSize, pageNumber} = queryData
 
             const filter = {}
 
-            const posts = await postsCollection
+            let sortOptions: {[key: string]: SortDirection} = {};
+
+            if (sortBy && sortDirection) {
+                sortOptions[sortBy] = sortDirection;
+            }
+
+            const posts = await PostsModel
                 .find(filter)
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
-                .sort(sortBy, sortDirection)
-                .toArray()
+                .sort(sortOptions)
 
-            const totalCount = await postsCollection
+            const totalCount = await PostsModel
                 .countDocuments(filter)
 
             const pagesCount = Math.ceil(totalCount / pageSize)
+
+            const items = await Promise.all(posts.map(async (post) => {
+                return postMapper(post, currentUserId);
+            }))
 
             return {
                 pagesCount: pagesCount,
                 page: pageNumber,
                 pageSize: pageSize,
                 totalCount: totalCount,
-                items: posts.map((post) => {
-                    return postMapper(post)
-                })
+                items: items
             }
 
 
@@ -57,16 +65,16 @@ export class PostQueryRepository {
 
     }
 
-    static async getPostById(postId: string): Promise<OutputPostModel | null> {
+    static async getPostById(postId: string, currentUserId: string | null): Promise<OutputPostModel | null> {
         try {
 
-            const post = await postsCollection.findOne({_id: new ObjectId(postId)})
+            const post = await PostsModel.findOne({_id: new ObjectId(postId)})
 
             if(!post) {
                 return null
             }
 
-            return postMapper(post)
+            return postMapper(post, currentUserId)
 
         }  catch (e) {
             return null
@@ -76,7 +84,7 @@ export class PostQueryRepository {
     static async deletePost(postId: string): Promise<boolean> {
         try {
 
-            const result = await postsCollection.deleteOne({_id: new ObjectId(postId)})
+            const result: any = await PostsModel.deleteOne({_id: new ObjectId(postId)})
 
             return !!result.deletedCount
 
