@@ -116,14 +116,14 @@ export class PostRepository {
 
             if (likeStatus === "Like" && myStatus === "Dislike") {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.likesCount': 1, 'extendedLikesInfo.dislikesCount': -1}})
 
                 return !!result.modifiedCount
 
             }
             if (likeStatus === "Dislike" && myStatus === "Like") {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1, 'likesInfo.likesCount': -1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.dislikesCount': 1, 'extendedLikesInfo.likesCount': -1}})
 
                 return !!result.modifiedCount
 
@@ -131,7 +131,7 @@ export class PostRepository {
 
             if (likeStatus === "Like" && (myStatus === null || myStatus === "None")) {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': 1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.likesCount': 1}})
 
                 return !!result.modifiedCount
 
@@ -139,7 +139,7 @@ export class PostRepository {
 
             if (likeStatus === "Dislike" && (myStatus === null || myStatus === "None")) {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': 1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.dislikesCount': 1}})
 
                 return !!result.modifiedCount
 
@@ -147,7 +147,7 @@ export class PostRepository {
 
             if (likeStatus === "None" && myStatus === "Like") {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.likesCount': -1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.likesCount': -1}})
 
                 return !!result.modifiedCount
 
@@ -155,7 +155,7 @@ export class PostRepository {
 
             if (likeStatus === "None" && myStatus === "Dislike") {
 
-                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'likesInfo.dislikesCount': -1}})
+                result = await PostsModel.updateOne({_id: new ObjectId(commentId)}, {$inc: {'extendedLikesInfo.dislikesCount': -1}})
 
                 return !!result.modifiedCount
 
