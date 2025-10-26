@@ -6,7 +6,7 @@ import {blogMapper} from "../models/blogs/mappers/blog-mapper";
 
 export class BlogRepository {
 
-    static async getAll(): Promise<OutputBlogType[] | false> {
+     static async getAll(): Promise<OutputBlogType[] | false> {
         try{
 
             const blogs = await blogsCollection.find({}).toArray()
@@ -38,18 +38,23 @@ export class BlogRepository {
         }
     }
 
-    static async createBlog(blog: BlogDb): Promise<string | false> {
+    static async createBlog(blog: BlogDb): Promise<OutputBlogType | boolean> {
         try {
+            const data = {
+                name: blog.name,
+                description: blog.description,
+                websiteUrl: blog.websiteUrl,
+                isMembership: blog.isMembership,
+                createdAt: blog.createdAt
+            } as WithId<BlogDb>;
 
-            const res = await blogsCollection.insertOne(
-                {name: blog.name,
-                    description: blog.description,
-                    websiteUrl: blog.websiteUrl,
-                    isMembership: blog.isMembership,
-                    createdAt: blog.createdAt
-                })
+            const res = await blogsCollection.insertOne({...data})
 
-            return res.insertedId.toString()
+            const id =  res.insertedId.toString()
+            if (id){
+                return { ...data, id: id.toString()}
+            }
+            else return false
 
         } catch (e) {
 
@@ -62,8 +67,7 @@ export class BlogRepository {
         try {
 
             const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {name: body.name, description: body.description, isMembership: body.isMembership, websiteUrl: body.websiteUrl}})
-
-            return !!result.matchedCount
+            return result.matchedCount > 0
 
         } catch (e) {
 

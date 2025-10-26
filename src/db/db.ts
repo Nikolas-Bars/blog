@@ -2,7 +2,6 @@ import dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
 import {BlogDb} from "../models/blogs/db/blog-db";
 import {PostDb} from "../models/posts/db/post-db";
-import any = jasmine.any;
 
 dotenv.config()
 // указываем порт
@@ -24,7 +23,7 @@ export const postsCollection = dataBase.collection<PostDb>('posts')
 
 export const runDb = async () => {
     try {
-        // при запуске функции коннктимся MongoDb
+        // при запуске функции коннектимся к MongoDb
         await client.connect()
         console.log('Client connected to DB')
         console.log(console.log(`blog was started on ${port} port`))

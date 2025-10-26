@@ -6,22 +6,22 @@ import {OutputBlogType} from "../models/blogs/output/blog-output-model";
 
 export const blogRoute = express.Router()
 
-blogRoute.get('/',async (req: Request, res: Response)  => {
+blogRoute.get('/', async(req: Request, res: Response) => {
     const blogs: OutputBlogType[] | false = await BlogRepository.getAll()
 
     blogs ? res.send(blogs) : res.sendStatus(404)
 })
 
-blogRoute.get('/:id',async (req: Request, res: Response) => {
-
+blogRoute.get('/:id', async (req: Request, res: Response) => {
     const result = await BlogRepository.getBlogById(req.params.id)
 
-    if (!result) res.sendStatus(404)
+    if (!result) {
+        res.sendStatus(404)
+    }
 
     else res.send(result)
-
 })
-
+// blogValidator() - скобки нужны тк это функция-фабрика (factory function), которая ВОЗВРАЩАЕТ массив middleware.
 blogRoute.post('/', authMiddleware, blogValidator(), async (req: Request, res: Response) => {
 
     const { name, description, websiteUrl, isMembership } = req.body
@@ -34,20 +34,24 @@ blogRoute.post('/', authMiddleware, blogValidator(), async (req: Request, res: R
         createdAt: (new Date()).toISOString()
     }
 
-    const newBlogId = await BlogRepository.createBlog(newBlog)
+    const createdBlog = await BlogRepository.createBlog(newBlog)
 
-    if (newBlogId) {
-
-        const createdBlog = await BlogRepository.getBlogById(newBlogId)
+    if (createdBlog) {
 
         res.status(201).json(createdBlog)
 
+        return
+
     } else {
         res.sendStatus(404)
+
+        return
     }
 
 })
+blogRoute.post('/', authMiddleware, blogValidator(), async (req: Request, res: Response) => {
 
+})
 blogRoute.put('/:id', authMiddleware, blogValidator(), async (req: Request, res: Response) => {
 
     const result = await BlogRepository.updateBlog(req.body, req.params.id)

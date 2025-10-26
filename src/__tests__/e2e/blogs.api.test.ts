@@ -27,7 +27,7 @@ describe('/blogs', () => {
         const bodyData = {
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            websiteUrl: "https://youtubs.com",
             isMembership: false
         }
         const response = await request(app)
@@ -42,7 +42,7 @@ describe('/blogs', () => {
             id: expect.any(String),
             name: "new blog name",
             description: "description blog",
-            websiteUrl: "https://Ybe4GR04dovOKHUOnbfOFRp5DgQwb18TtTqfPN3KdbHiND6I7F57zwpbvBC.KPy4jZVyoEqNpr4s1jMoOhoGYeE0mkpc",
+            websiteUrl: "https://youtubs.com",
             isMembership: expect.any(Boolean),
             createdAt: expect.any(String)
         })
