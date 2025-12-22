@@ -18,5 +18,5 @@ export const CreateUsers = async (app: any, count: number) => {
         users.push(result.body)
     }
 
-    return
+    return users
 }

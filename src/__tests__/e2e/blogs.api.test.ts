@@ -2,10 +2,17 @@ import {app} from "../../app";
 import request from 'supertest'
 import {CreateBlogInputModel} from "../../models/blogs/input/create.blog.input.model";
 import {OutputBlogType} from "../../models/blogs/output/blog-output-model";
+import mongoose from "mongoose";
 
 describe('/blogs', () => {
     // вызываем эндпоинт который зачистит стартовые данные
+
+    const mongoURI = 'mongodb://localhost:27017/'
+
     beforeAll(async () => {
+
+        await mongoose.connect(mongoURI)
+
         await request(app)
             .delete('/testing/all-data')
     })

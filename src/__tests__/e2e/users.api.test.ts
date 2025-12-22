@@ -1,12 +1,19 @@
 import {app} from "../../app";
 import request from 'supertest'
 import {CreateUsers} from "../utils/users-utils";
+import mongoose from "mongoose";
 
 describe('/users', () => {
 
+    const mongoURI = 'mongodb://localhost:27017/'
+
     beforeAll(async () => {
+
+        await mongoose.connect(mongoURI)
+
         await request(app)
             .delete('/testing/all-data')
+
     })
 
    it('should be get users paginated list', async () => {

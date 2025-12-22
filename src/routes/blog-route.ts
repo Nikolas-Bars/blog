@@ -21,10 +21,11 @@ import {UpdateBlogInputModel} from "../models/blogs/input/update.blog.input.mode
 import {CreateBlogInputModel} from "../models/blogs/input/create.blog.input.model";
 import {OutputPostModel} from "../models/posts/output/output-post";
 import {QueryPostsByBlogIdModel} from "../models/blogs/input/QueryPostsByBlogIdModel";
+import {JWTService} from "../services/JWT.service";
 
 export const blogRoute = express.Router()
 
-blogRoute.get('/',async (req: RequestWithQuery<QueryBlogInputModel>, res: Response)  => {
+blogRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModel>, res: Response)  => {
 
     const sortData = {
         searchNameTerm: req.query.searchNameTerm ?? null,
@@ -58,6 +59,20 @@ blogRoute.get('/:id',async (req: RequestWithParams<ParamType>, res: Response) =>
 
 blogRoute.get('/:id/posts', async (req: RequestWithParamsAndQuery<ParamType, QueryPostsByBlogIdModel>, res: ResponseType<PaginationType<OutputPostModel>>) => {
 
+    let currentUserId = null
+
+    if (req.headers && req.headers.authorization) {
+        const token = req.headers.authorization.split(' ')[1]
+
+        const payload: any = await JWTService.verifyToken(token)
+
+        if (payload) {
+
+            currentUserId = payload.userId
+
+        }
+    }
+
     const blogId = req.params.id
 
     if (!ObjectId.isValid(blogId)) {
@@ -77,7 +92,7 @@ blogRoute.get('/:id/posts', async (req: RequestWithParamsAndQuery<ParamType, Que
         pageSize: req.query.pageSize ? +req.query.pageSize : 10
     }
 
-    const result = await BlogQueryRepository.getPostsByBlogId(blogId, queryData)
+    const result = await BlogQueryRepository.getPostsByBlogId(blogId, queryData, currentUserId)
 
     result ? res.status(200).json(result) : res.sendStatus(HTTP_RESPONSE_CODES.NOT_FOUND)
 
@@ -120,7 +135,7 @@ blogRoute.post('/:id/posts', authMiddleware, postFromBlogValidator(), async (req
         content: req.body.content
     }
 
-    const result: OutputPostModel | null = await BlogServices.createPostToBlog(id, data)
+    const result: OutputPostModel | null = await BlogServices.createPostToBlog(id, data, req.userId)
 
     if (result) {
         res.status(HTTP_RESPONSE_CODES.CREATED).json(result)
@@ -148,10 +163,9 @@ blogRoute.put('/:id', authMiddleware, blogValidator(), async (req: RequestWithPa
 })
 
 blogRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-
     const blogId = req.params.id
 
-    if(!ObjectId.isValid(req.params.id)){
+    if (!ObjectId.isValid(req.params.id)) {
         res.sendStatus(404)
         return
     }

@@ -1,15 +1,21 @@
 import express, {Request, Response} from 'express'
-import {blogsCollection, postsCollection, usersCollection} from "../db/db";
+import {BlogsModel, CommentsModel, PostsModel, RequestHistoryModel, SecurityModel, UsersModel} from "../db/db";
 
 export const deleteAllDataRoute = express.Router()
 
 deleteAllDataRoute.delete('/',async (req: Request, res: Response) => {
 
-    await blogsCollection.deleteMany({})
+    await BlogsModel.deleteMany({})
 
-    await postsCollection.deleteMany({})
+    await PostsModel.deleteMany({})
 
-    await usersCollection.deleteMany({})
+    await UsersModel.deleteMany({})
+
+    await CommentsModel.deleteMany({})
+
+    await RequestHistoryModel.deleteMany({})
+
+    await SecurityModel.deleteMany({})
 
     res.sendStatus(204)
 })

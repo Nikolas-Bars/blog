@@ -12,7 +12,7 @@ import {OutputPostModel} from "../models/posts/output/output-post";
 
 export class BlogServices {
 
-    static async createPostToBlog(blogId: string, createPostModel: CreatePostFromBlogInputModel): Promise<OutputPostModel | null> {
+    static async createPostToBlog(blogId: string, createPostModel: CreatePostFromBlogInputModel, currentUserId: string): Promise<OutputPostModel | null> {
 
         const { shortDescription, title, content} = createPostModel
 
@@ -28,7 +28,13 @@ export class BlogServices {
             content,
             blogId: blogId,
             blogName: title,
-            createdAt: (new Date()).toISOString()
+            createdAt: (new Date()).toISOString(),
+            extendedLikesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+                myStatus: 'None',
+                newestLikes: []
+            },
         }
 
         const insertedId: string | null = await PostRepository.createPost(newPost)
@@ -37,7 +43,7 @@ export class BlogServices {
             return null
         }
 
-        return await PostQueryRepository.getPostById(insertedId!)
+        return await PostQueryRepository.getPostById(insertedId!, currentUserId)
 
     }
 
@@ -52,7 +58,9 @@ export class BlogServices {
             const result = await BlogRepository.deleteBlog(blogId)
 
             if (result) {
+
                 return await PostRepository.deletePostsByBlogId(blogId)
+
             } else {
                 return false
             }

@@ -1,18 +1,10 @@
-import {postsCollection, usersCollection} from "../db/db";
-import {postMapper} from "../models/posts/mappers/post-mapper";
-import {OutputPostModel} from "../models/posts/output/output-post";
+import {UsersModel} from "../db/db";
 import {ObjectId, SortDirection, WithId} from "mongodb";
-import {PaginationType, ResponseType} from "../models/common";
+import {PaginationType} from "../models/common";
 import {QueryUserInputModel} from "../models/users/input/query.user.input.model";
 import {UserDbType} from "../models/users/db/user-db";
 import {OutputUser} from "../models/users/output/output-user";
-
-type NewPostDataType = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string
-}
+import {CommentatorInfo} from "../models/comments/commentator-info/commentator-info";
 
 export type QueryPostDataType = {
     pageNumber: number
@@ -24,6 +16,7 @@ export type QueryPostDataType = {
 export class UserQueryRepository {
 
     static async getUsers(params: QueryUserInputModel): Promise<PaginationType<OutputUser> | null> {
+        // worked
         try {
             const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } = params
 
@@ -50,15 +43,20 @@ export class UserQueryRepository {
                 if(searchEmailTerm) filter = {email: { $regex: searchEmailTerm, $options: 'i' }}
             }
 
-            const totalCount = await usersCollection
+            const totalCount = await UsersModel
                 .countDocuments(filter)
 
-            const users = await usersCollection
+            let sortOptions: {[key: string]: SortDirection} = {};
+
+            if (correctParams?.sortBy && correctParams?.sortDirection) {
+                sortOptions[correctParams.sortBy] = correctParams.sortDirection;
+            }
+
+            const users = await UsersModel
                 .find(filter)
                 .skip((correctParams.pageNumber - 1) * correctParams.pageSize)
                 .limit(correctParams.pageSize)
-                .sort(correctParams.sortBy, correctParams.sortDirection)
-                .toArray()
+                .sort(sortOptions)
 
             return {
                 page: correctParams.pageNumber,
@@ -83,5 +81,29 @@ export class UserQueryRepository {
             email: users.email,
             login: users.login
         }
+    }
+
+    static async getCommentatorById(commentatorId: string): Promise<CommentatorInfo | null> {
+        try {
+            // worked
+            const commentator = await UsersModel.findOne({_id: new ObjectId(commentatorId)})
+
+            if (!commentator) {
+                return null
+            } else {
+                return {
+                    userId: commentator._id.toString(),
+                    userLogin: commentator.login
+                }
+            }
+
+
+        } catch (e) {
+
+            console.error(e)
+
+            return null
+        }
+
     }
 }
